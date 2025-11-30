@@ -32,7 +32,7 @@ public:
 
 	glm::mat4 getTransform() {
 		glm::mat4 T = glm::translate(glm::mat4(1.0), glm::vec3(position));
-		glm::mat4 R = glm::rotate(glm::mat4(1.0), glm::radians(rotation), glm::vec3(0, 0, 1));
+		glm::mat4 R = glm::rotate(glm::mat4(1.0), glm::radians(rotation), glm::vec3(0, 1, 0));
 		glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
 		return T * R * S;
 	}
@@ -59,16 +59,6 @@ public:
 		force = glm::vec3(0, 0, 0);
 		torque = 0.0f;
 
-		if (position.x > ofGetWidth()) {
-			position.x = 0;
-		} else if (position.x < 0) {
-			position.x = ofGetWidth();
-		}
-		if (position.y > ofGetHeight()) {
-			position.y = 0;
-		} else if (position.y < 0) {
-			position.y = ofGetHeight();
-		}
 	}
 
 	ofVec3f velocity = glm::vec3(0, 0, 0);
@@ -90,13 +80,13 @@ public:
 	bool fwdPressed = false;
 	bool bwdPressed = false;
 	bool upPressed = false;
-	bool downPressed = false;
 	bool leftPressed = false;
 	bool rightPressed = false;
 	bool alive = true;
-	bool showHeading = false;
+	bool showHeading = true;
 
-	glm::vec3 headingP = glm::vec3(0, -100, 0);
+
+	glm::vec3 headingP = glm::vec3(5, 0, 0);
 
 	Player() { }
 	void draw() {
@@ -118,17 +108,20 @@ public:
 	}
 
 	void integrate() {
-		float moveForce = 250.0f;
-		float torqueForce = 200.0f;
-		float f = 0;
+		float moveForce = 2.0f;
+		float upForce = 4.0f;
+		float torqueForce = 50.0f;
+		float movef = 0;
+		float upf = 0;
 		float t = 0;
 
-		if (upPressed) f += 1;
-		if (downPressed) f -= 1;
+		if (upPressed) upf += 1;
+		if (fwdPressed) movef += 1;
+		if (bwdPressed) movef -= 1;
 		if (leftPressed) t -= 1;
 		if (rightPressed) t += 1;
 
-		force += f * getHeadingD() * moveForce;
+		force += (upf * glm::vec3(0, 1, 0) * upForce) + (movef * getHeadingD() * moveForce);
 		torque += t * torqueForce;
 
 		PhysicsObject::integrate();

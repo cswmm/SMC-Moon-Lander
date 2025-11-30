@@ -100,6 +100,7 @@ void ofApp::setup(){
 void ofApp::update() {
 
 	emitter.update();
+	player.integrate();
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -264,7 +265,11 @@ void ofApp::keyPressed(int key) {
 		bDisplayOctree = !bDisplayOctree;
 		break;
 	case 'r':
-		cam.reset();
+		player.setPosition(1, 1, 0);
+		player.acceleration = glm::vec3(0, 0, 0);
+		player.velocity = glm::vec3(0, 0, 0);
+		player.rotVel = 0;
+		//cam.reset();
 		break;
 	case 'p':
 		savePicture();
@@ -312,9 +317,6 @@ void ofApp::keyPressed(int key) {
 	case 'd':
 		player.rightPressed = true;
 		break;
-	case OF_KEY_CONTROL:
-		player.downPressed = true;
-		break;
 	default:
 		break;
 	}
@@ -353,9 +355,6 @@ void ofApp::keyReleased(int key) {
 	case 'D':
 	case 'd':
 		player.rightPressed = false;
-		break;
-	case OF_KEY_CONTROL:
-		player.downPressed = false;
 		break;
 	case OF_KEY_ALT:
 		cam.disableMouseInput();
@@ -479,8 +478,7 @@ void ofApp::mouseDragged(int x, int y, int button) {
 		}*/
 
 
-	}
-	else {
+	} else {
 		ofVec3f p;
 		raySelectWithOctree(p);
 	}
