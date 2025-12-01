@@ -117,8 +117,8 @@ public:
 		float t = 0;
 
 		if (upPressed) upf += 1;
-		if (fwdPressed) movef += 1;
-		if (bwdPressed) movef -= 1;
+		if (fwdPressed) movef -= 1;
+		if (bwdPressed) movef += 1;
 		if (leftPressed) t += 1;
 		if (rightPressed) t -= 1;
 

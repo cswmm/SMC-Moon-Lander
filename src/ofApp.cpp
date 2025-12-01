@@ -48,7 +48,7 @@ void ofApp::setup(){
 	mars.loadModel("geo/terrainbasicshaded.obj");
 	mars.setScaleNormalization(false);
 
-	player.model.loadModel("geo/lander.obj");
+	player.model.loadModel("geo/rocketSmooth.obj");
 	player.model.setScaleNormalization(false);
 	player.setPosition(1, 1, 0);
 
@@ -371,18 +371,22 @@ void ofApp::keyPressed(int key) {
 	case ' ':
 		player.upPressed = true;
 		break;
+	case OF_KEY_UP:
 	case 'W':
 	case 'w':
 		player.fwdPressed = true;
 		break;
+	case OF_KEY_LEFT:
 	case 'A':
 	case 'a':
 		player.leftPressed = true;
 		break;
+	case OF_KEY_DOWN:
 	case 'S':
 	case 's':
 		player.bwdPressed = true;
 		break;
+	case OF_KEY_RIGHT:
 	case 'D':
 	case 'd':
 		player.rightPressed = true;
@@ -410,18 +414,22 @@ void ofApp::keyReleased(int key) {
 	case ' ':
 		player.upPressed = false;
 		break;
+	case OF_KEY_UP:
 	case 'W':
 	case 'w':
 		player.fwdPressed = false;
 		break;
+	case OF_KEY_LEFT:
 	case 'A':
 	case 'a':
 		player.leftPressed = false;
 		break;
+	case OF_KEY_DOWN:
 	case 'S':
 	case 's':
 		player.bwdPressed = false;
 		break;
+	case OF_KEY_RIGHT:
 	case 'D':
 	case 'd':
 		player.rightPressed = false;
