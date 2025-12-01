@@ -32,11 +32,20 @@ void ofApp::setup(){
 	ofEnableSmoothing();
 	ofEnableDepthTest();
 
+	fixedCam1.setPosition(-10, 20, -55);
+	fixedCam1.lookAt(glm::vec3(0, 0, 0));
+
+	fixedCam2.setPosition(55, 25, 25);
+	fixedCam2.lookAt(glm::vec3(0, 0, 25));
+
+	fixedCam3.setPosition(-45, 40, 45);
+	fixedCam3.lookAt(glm::vec3(0, 0, 0));
+
 	// setup rudimentary lighting 
 	//
 	initLightingAndMaterials();
 
-	mars.loadModel("geo/mars-low-5x-v2.obj");
+	mars.loadModel("geo/terrainbasicshaded.obj");
 	mars.setScaleNormalization(false);
 
 	player.model.loadModel("geo/lander.obj");
@@ -56,6 +65,8 @@ void ofApp::setup(){
 	gui.add(numLevels.setup("Number of Octree Levels", 1, 1, 10));
 	gui.add(bTimingInfo.setup("Record timing info", true));
 	bHide = false;
+
+	gui.add(camSelection.setup("Camera Selection: ", 4, 0, 4));
 
 	//  Create Octree for testing.
 	//
@@ -92,6 +103,22 @@ void ofApp::setup(){
 	turbulenceForce = new TurbulenceForce(glm::vec3(-turbulence, -turbulence, -turbulence),
 		glm::vec3(float(turbulence), float(turbulence), float(turbulence)));
 	emitter.sys->addForce(turbulenceForce);
+
+	craterLanding.setPosition(21, -2, 28);
+	craterLanding.setRadius(15);
+	craterLanding.setHeight(3);
+
+	hillLanding.setPosition(29, 16, -30);
+	hillLanding.setRadius(12);
+	hillLanding.setHeight(3);
+
+	flatLanding.setPosition(-31, 8, 32);
+	flatLanding.setRadius(10);
+	flatLanding.setHeight(3);
+
+	holeLanding.setPosition(-10, -8, -16);
+	holeLanding.setRadius(7);
+	holeLanding.setHeight(3);
 }
  
 //--------------------------------------------------------------
@@ -101,19 +128,44 @@ void ofApp::update() {
 
 	emitter.update();
 	player.integrate();
+
+	craterLanding.integrate();
+	hillLanding.integrate();
+	flatLanding.integrate();
+	holeLanding.integrate();
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
 
 	ofBackground(ofColor::black);
 
+	
 	glDepthMask(false);
 	if (!bHide) gui.draw();
 	glDepthMask(true);
 
-	cam.begin();
+	switch (camSelection) {
+	case 0:
+		fixedCam1.begin();
+		break;
+	case 1:
+		fixedCam2.begin();
+		break;
+	case 2:
+		fixedCam3.begin();
+		break;
+	case 3:
+		if (bLanderLoaded) {
+			landerCam.begin();
+			break;
+		}
+	default:
+		cam.begin();
+		break;
+	}
+
 	ofPushMatrix();
-	if (bWireframe) {                    // wireframe mode  (include axis)
+	if (bWireframe) { // wireframe mode  (include axis)
 		ofDisableLighting();
 		ofSetColor(ofColor::slateGray);
 		mars.drawWireframe();
@@ -122,9 +174,8 @@ void ofApp::draw() {
 			if (!bTerrainSelected) drawAxis(player.getPosition());
 		}
 		if (bTerrainSelected) drawAxis(ofVec3f(0, 0, 0));
-	}
-	else {
-		ofEnableLighting();              // shaded mode
+	} else {
+		ofEnableLighting(); // shaded mode
 		mars.drawFaces();
 
 		ofMesh mesh;
@@ -161,8 +212,7 @@ void ofApp::draw() {
 	}
 	if (bTerrainSelected) drawAxis(ofVec3f(0, 0, 0));
 
-
-	if (bDisplayPoints) {                // display points as an option    
+	if (bDisplayPoints) { // display points as an option
 		glPointSize(3);
 		ofSetColor(ofColor::green);
 		mars.drawVertices();
@@ -175,7 +225,6 @@ void ofApp::draw() {
 		ofDrawSphere(selectedPoint, .1);
 	}
 
-
 	// recursively draw octree
 	//
 	ofDisableLighting();
@@ -185,8 +234,7 @@ void ofApp::draw() {
 	if (bDisplayLeafNodes) {
 		octree.drawLeafNodes(octree.root);
 		cout << "num leaf: " << octree.numLeaf << endl;
-    }
-	else if (bDisplayOctree) {
+	} else if (bDisplayOctree) {
 		ofNoFill();
 		ofSetColor(ofColor::white);
 		octree.draw(numLevels, 0, boxColors);
@@ -203,10 +251,32 @@ void ofApp::draw() {
 
 	//emitter.draw();
 
+	craterLanding.draw();
+	hillLanding.draw();
+	flatLanding.draw();
+	holeLanding.draw();
+
 	ofPopMatrix();
 	cam.end();
-}
 
+	switch (camSelection) {
+	case 0:
+		fixedCam1.end();
+		break;
+	case 1:
+		fixedCam2.end();
+		break;
+	case 2:
+		fixedCam3.end();
+		break;
+	case 3:
+		landerCam.end();
+		break;
+	default:
+		cam.end();
+		break;
+	}
+}
 
 // 
 // Draw an XYZ axis in RGB at world (0,0,0) for reference.
@@ -258,7 +328,7 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'L':
 	case 'l':
-		bDisplayLeafNodes = !bDisplayLeafNodes;
+		cam.lookAt(player.getPosition());
 		break;
 	case 'O':
 	case 'o':

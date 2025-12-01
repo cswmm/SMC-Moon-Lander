@@ -85,6 +85,7 @@ public:
 	bool alive = true;
 	bool showHeading = true;
 
+	glm::vec3 gravity = glm::vec3(0, -9.8f, 0);
 
 	glm::vec3 headingP = glm::vec3(5, 0, 0);
 
@@ -109,7 +110,7 @@ public:
 
 	void integrate() {
 		float moveForce = 2.0f;
-		float upForce = 4.0f;
+		float upForce = 22.0f;
 		float torqueForce = 50.0f;
 		float movef = 0;
 		float upf = 0;
@@ -118,10 +119,13 @@ public:
 		if (upPressed) upf += 1;
 		if (fwdPressed) movef += 1;
 		if (bwdPressed) movef -= 1;
-		if (leftPressed) t -= 1;
-		if (rightPressed) t += 1;
+		if (leftPressed) t += 1;
+		if (rightPressed) t -= 1;
 
-		force += (upf * glm::vec3(0, 1, 0) * upForce) + (movef * getHeadingD() * moveForce);
+		force += (upf * glm::vec3(0, 1, 0) * upForce);
+		force += (movef * getHeadingD() * moveForce);
+		force += gravity;
+
 		torque += t * torqueForce;
 
 		PhysicsObject::integrate();
@@ -133,5 +137,36 @@ public:
 
 	glm::vec3 getHeadingP() {
 		return glm::vec3(getTransform() * glm::vec4(headingP, 1.0));
+	}
+};
+
+class Landing : public PhysicsObject {
+public:
+	Landing() { }
+
+	ofCylinderPrimitive cylinder;
+	float radius;
+	float height;
+
+	void setRadius(float r) { radius = r; }
+	void setHeight(float h) { height = h; }
+
+	void draw() {
+		ofPushMatrix();
+		ofMultMatrix(getTransform());
+
+		ofSetColor(ofColor::aquamarine);
+		ofSetCircleResolution(50);
+		ofDrawCylinder(radius, height);
+
+		ofPopMatrix();
+	}
+
+	void integrate() {
+		float torqueForce = 150.0f;
+
+		torque += torqueForce * sin(ofGetElapsedTimef() * 0.5f);
+
+		PhysicsObject::integrate();
 	}
 };

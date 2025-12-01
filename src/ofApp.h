@@ -57,6 +57,7 @@ class ofApp : public ofBaseApp{
 		ofxIntSlider numLevels;
 		ofxPanel gui;
 		ofxToggle bTimingInfo;
+		ofxIntSlider camSelection;
 
 		ParticleEmitter emitter;
 		GravityForce * gravityForce;
@@ -82,4 +83,16 @@ class ofApp : public ofBaseApp{
 		vector<Box> bboxList;
 
 		const float selectionRange = 4.0;
+
+		ofCamera fixedCam1;
+		ofCamera fixedCam2;
+		ofCamera fixedCam3;
+
+		ofCamera landerCam;
+
+		Landing craterLanding;
+		Landing hillLanding;
+		Landing flatLanding;
+		Landing holeLanding;
+		float currRot = 0;
 };
