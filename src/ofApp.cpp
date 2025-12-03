@@ -141,8 +141,6 @@ void ofApp::update() {
 	colBoxList.clear();
 	octree.intersect(bounds, octree.root, colBoxList);
 
-	cout << colBoxList.size() << " colliding boxes" << endl;
-
 	if (colBoxList.size() >= 10) {
 
 		glm::vec3 n = glm::vec3(0, 0, 0);
