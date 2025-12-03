@@ -85,9 +85,9 @@ public:
 	bool alive = true;
 	bool showHeading = true;
 
-	glm::vec3 gravity = glm::vec3(0, -9.8f, 0);
+	glm::vec3 gravity = glm::vec3(0, -4.3f, 0);
 
-	glm::vec3 headingP = glm::vec3(5, 0, 0);
+	glm::vec3 headingP = glm::vec3(-5, 0, 0);
 
 	Player() { }
 	void draw() {
@@ -110,15 +110,15 @@ public:
 
 	void integrate() {
 		float moveForce = 2.0f;
-		float upForce = 22.0f;
+		float upForce = 8.0f;
 		float torqueForce = 50.0f;
 		float movef = 0;
 		float upf = 0;
 		float t = 0;
 
 		if (upPressed) upf += 1;
-		if (fwdPressed) movef -= 1;
-		if (bwdPressed) movef += 1;
+		if (fwdPressed) movef += 1;
+		if (bwdPressed) movef -= 1;
 		if (leftPressed) t += 1;
 		if (rightPressed) t -= 1;
 
@@ -137,6 +137,13 @@ public:
 
 	glm::vec3 getHeadingP() {
 		return glm::vec3(getTransform() * glm::vec4(headingP, 1.0));
+	}
+
+	glm::vec3 getCenter() {
+		glm::vec3 min = model.getSceneMin();
+		glm::vec3 max = model.getSceneMax();
+		model.getPosition();
+		return position + (min + max) * 0.5f;
 	}
 };
 

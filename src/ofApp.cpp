@@ -61,7 +61,7 @@ void ofApp::setup(){
 
 	player.model.loadModel("geo/rocketSmooth.obj");
 	player.model.setScaleNormalization(false);
-	player.setPosition(1, 1, 0);
+	player.setPosition(1, 15, 0);
 
 	bLanderLoaded = true;
 	for (int i = 0; i < player.model.getMeshCount(); i++) {
@@ -138,12 +138,46 @@ void ofApp::setup(){
 void ofApp::update() {
 
 	emitter.update();
-	player.integrate();
 
 	craterLanding.integrate();
 	hillLanding.integrate();
 	flatLanding.integrate();
 	holeLanding.integrate();
+
+	ofVec3f min = player.model.getSceneMin() + player.getPosition();
+	ofVec3f max = player.model.getSceneMax() + player.getPosition();
+
+	Box bounds = Box(Vector3(min.x, min.y, min.z), Vector3(max.x, max.y, max.z));
+
+	colBoxList.clear();
+	octree.intersect(bounds, octree.root, colBoxList);
+
+	if (colBoxList.size() >= 10) {
+
+		glm::vec3 n = glm::vec3(0, 0, 0);
+		for (int i = 0; i < colBoxList.size(); i++) {
+			Box currBox = colBoxList[i];
+			
+			Vector3 center = currBox.center();
+
+			glm::vec3 force = player.getCenter() - glm::vec3(center.x(), center.y(), center.z());
+
+			n += force;
+		}
+
+		n = glm::normalize(n);
+		ofVec3f v = player.velocity;
+		float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
+		float resolution = 0.1f;
+
+
+		if (mag < 0) {
+			glm::vec3 p = (resolution + 1) * -mag * n;
+			player.velocity = ofVec3f(p.x, p.y, p.z);
+		}
+	}
+
+	player.integrate();
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -346,7 +380,7 @@ void ofApp::keyPressed(int key) {
 		bDisplayOctree = !bDisplayOctree;
 		break;
 	case 'r':
-		player.setPosition(1, 1, 0);
+		player.setPosition(1, 15, 0);
 		player.acceleration = glm::vec3(0, 0, 0);
 		player.velocity = glm::vec3(0, 0, 0);
 		player.rotVel = 0;
