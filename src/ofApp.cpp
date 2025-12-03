@@ -32,20 +32,31 @@ void ofApp::setup(){
 	ofEnableSmoothing();
 	ofEnableDepthTest();
 
-	fixedCam1.setPosition(-10, 20, -55);
+	fixedCam1.setPosition(-100, 200, -550);
 	fixedCam1.lookAt(glm::vec3(0, 0, 0));
 
-	fixedCam2.setPosition(55, 25, 25);
-	fixedCam2.lookAt(glm::vec3(0, 0, 25));
+	fixedCam2.setPosition(550, 250, 250);
+	fixedCam2.lookAt(glm::vec3(0, 0, 250));
 
-	fixedCam3.setPosition(-45, 40, 45);
+	fixedCam3.setPosition(-450, 400, 450);
 	fixedCam3.lookAt(glm::vec3(0, 0, 0));
 
 	// setup rudimentary lighting 
 	//
+	star.setPosition(0, 500, 1000);
+	ofFloatColor sunColor(0.8, 0.8, 1, 1.0);
+	star.setDiffuseColor(sunColor);
+	ofFloatColor spec(1, 1, 1, 1);
+	star.setSpecularColor(spec);
+	star.setAmbientColor(ofFloatColor(0.8, 0.2, 0.8, 1));
+	star.setSpotlight();
+	star.setSpotlightCutOff(45);
+	star.setSpotConcentration(2);
+
 	initLightingAndMaterials();
 
-	mars.loadModel("geo/terrainbasicshaded.obj");
+	mars.loadModel("geo/terrain.obj");
+	cout << mars.getMeshCount() << endl;
 	mars.setScaleNormalization(false);
 
 	player.model.loadModel("geo/rocketSmooth.obj");
@@ -104,21 +115,21 @@ void ofApp::setup(){
 		glm::vec3(float(turbulence), float(turbulence), float(turbulence)));
 	emitter.sys->addForce(turbulenceForce);
 
-	craterLanding.setPosition(21, -2, 28);
-	craterLanding.setRadius(15);
-	craterLanding.setHeight(3);
+	craterLanding.setPosition(210, -20, 280);
+	craterLanding.setRadius(150);
+	craterLanding.setHeight(30);
 
-	hillLanding.setPosition(29, 16, -30);
-	hillLanding.setRadius(12);
-	hillLanding.setHeight(3);
+	hillLanding.setPosition(290, 160, -300);
+	hillLanding.setRadius(120);
+	hillLanding.setHeight(30);
 
-	flatLanding.setPosition(-31, 8, 32);
-	flatLanding.setRadius(10);
-	flatLanding.setHeight(3);
+	flatLanding.setPosition(-310, 80, 320);
+	flatLanding.setRadius(100);
+	flatLanding.setHeight(30);
 
-	holeLanding.setPosition(-10, -8, -16);
-	holeLanding.setRadius(7);
-	holeLanding.setHeight(3);
+	holeLanding.setPosition(-60, -80, -90);
+	holeLanding.setRadius(70);
+	holeLanding.setHeight(30);
 }
  
 //--------------------------------------------------------------
@@ -176,6 +187,7 @@ void ofApp::draw() {
 		if (bTerrainSelected) drawAxis(ofVec3f(0, 0, 0));
 	} else {
 		ofEnableLighting(); // shaded mode
+		star.enable();
 		mars.drawFaces();
 
 		ofMesh mesh;
@@ -227,6 +239,7 @@ void ofApp::draw() {
 
 	// recursively draw octree
 	//
+	star.disable();
 	ofDisableLighting();
 	int level = 0;
 	//	ofNoFill();
@@ -255,9 +268,7 @@ void ofApp::draw() {
 	hillLanding.draw();
 	flatLanding.draw();
 	holeLanding.draw();
-
 	ofPopMatrix();
-	cam.end();
 
 	switch (camSelection) {
 	case 0:

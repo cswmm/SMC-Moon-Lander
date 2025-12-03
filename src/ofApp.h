@@ -95,4 +95,8 @@ class ofApp : public ofBaseApp{
 		Landing flatLanding;
 		Landing holeLanding;
 		float currRot = 0;
+
+
+		ofLight star;
+		ofLight landerLight;
 };

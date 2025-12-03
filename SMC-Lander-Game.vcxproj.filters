@@ -76,40 +76,40 @@
       <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons">
-      <UniqueIdentifier>{E04439C4--C42-1-4F-B7-A-D0B-9C8185E3FA62}</UniqueIdentifier>
+      <UniqueIdentifier>{8A063FEF--976-0-4D-3E-9-EE1-7E85CF7CFCBB}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader">
-      <UniqueIdentifier>{0FC9748A--24B-1-4A-21-B-312-32D0F6DDF064}</UniqueIdentifier>
+      <UniqueIdentifier>{99D0B5FB--6B4-F-4F-C8-B-CC5-1320544DDF4C}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\src">
-      <UniqueIdentifier>{2CB00515--F1B-9-47-B6-9-078-0EFA569571AF}</UniqueIdentifier>
+      <UniqueIdentifier>{B16EEF66--E42-E-4B-AA-B-20F-3D658874656C}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs">
-      <UniqueIdentifier>{E3F2EE15--A65-2-4B-5A-9-4A5-A6FBE78FD4A9}</UniqueIdentifier>
+      <UniqueIdentifier>{2341E212--361-E-4A-3F-9-00D-24B6B17AF271}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs\assimp">
-      <UniqueIdentifier>{B81D580A--9C0-1-49-06-A-609-CDAA8B4513A3}</UniqueIdentifier>
+      <UniqueIdentifier>{97CEC311--F80-8-4B-15-8-D9D-15BD10F97A3A}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include">
-      <UniqueIdentifier>{3A7D3287--26D-4-47-E5-B-62B-22F68F0C6B0C}</UniqueIdentifier>
+      <UniqueIdentifier>{326C9C0F--341-8-44-04-9-B28-2950FBB04807}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp">
-      <UniqueIdentifier>{7420D2B5--CDD-F-48-DD-B-40C-818D784045F1}</UniqueIdentifier>
+      <UniqueIdentifier>{1F670DDD--D33-B-4F-F4-B-60E-0DF53DD40F74}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\Compiler">
-      <UniqueIdentifier>{6C803EF0--E5C-7-4D-2E-B-126-4745F1D9F15C}</UniqueIdentifier>
+      <UniqueIdentifier>{57C49991--83D-5-40-C7-A-DEE-DC5FDB892EB8}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\port">
-      <UniqueIdentifier>{BCF63C86--25D-0-4C-E7-9-341-C9851F92C3E3}</UniqueIdentifier>
+      <UniqueIdentifier>{E21F5E6D--90C-2-48-60-9-475-E0CD913D3D10}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\assimp\port\AndroidJNI">
-      <UniqueIdentifier>{D98A3B75--C8E-9-4A-CE-8-1D2-EC2D7B76DFB9}</UniqueIdentifier>
+      <UniqueIdentifier>{08FD0F54--CE3-4-4B-73-B-21F-879A8CE83AC8}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxGui">
-      <UniqueIdentifier>{8D0DFC93--3D6-1-48-F3-A-45A-A37EDD530A88}</UniqueIdentifier>
+      <UniqueIdentifier>{FE54520C--D5C-0-44-BC-A-B8B-44534022DA44}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxGui\src">
-      <UniqueIdentifier>{6C22EBE9--817-D-4A-B8-A-1E3-DB07BEFD3E1C}</UniqueIdentifier>
+      <UniqueIdentifier>{DEFEFE77--3C5-B-43-4C-9-989-8ED835E353B2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -460,16 +460,10 @@
     <None Include="src\Octree.readme">
       <Filter>src</Filter>
     </None>
-    <None Include="bin\data\geo\rocketSmooth.mtl" />
-    <None Include="bin\data\geo\terrain.mtl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\octree-readme.txt">
       <Filter>src</Filter>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="bin\data\geo\rocketSmooth.obj" />
-    <Object Include="bin\data\geo\terrain.obj" />
   </ItemGroup>
 </Project>

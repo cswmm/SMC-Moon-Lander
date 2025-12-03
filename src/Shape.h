@@ -163,9 +163,9 @@ public:
 	}
 
 	void integrate() {
-		float torqueForce = 150.0f;
+		float torqueForce = 150.0f*(radius/100);
 
-		torque += torqueForce * sin(ofGetElapsedTimef() * 0.5f);
+		torque += torqueForce * sin((ofGetElapsedTimef() * 0.5)+radius);
 
 		PhysicsObject::integrate();
 	}
