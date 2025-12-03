@@ -460,16 +460,10 @@
     <None Include="src\Octree.readme">
       <Filter>src</Filter>
     </None>
-    <None Include="bin\data\geo\rocketSmooth.mtl" />
-    <None Include="bin\data\geo\terrain.mtl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\octree-readme.txt">
       <Filter>src</Filter>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="bin\data\geo\rocketSmooth.obj" />
-    <Object Include="bin\data\geo\terrain.obj" />
   </ItemGroup>
 </Project>

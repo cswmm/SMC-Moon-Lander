@@ -25,11 +25,11 @@ void ofApp::setup(){
 	bTerrainSelected = true;
 //	ofSetWindowShape(1024, 768);
 	cam.setDistance(10);
-	cam.setNearClip(.1);
+	cam.setNearClip(1);
 	cam.setFov(65.5);   // approx equivalent to 28mm in 35mm format
 	ofSetVerticalSync(true);
 	cam.disableMouseInput();
-	ofEnableSmoothing();
+	//ofEnableSmoothing();
 	ofEnableDepthTest();
 
 	fixedCam1.setPosition(-100, 200, -550);

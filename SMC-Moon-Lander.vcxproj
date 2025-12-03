@@ -72,7 +72,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64' or '$(Configuration)|$(Platform)'=='Release|ARM64' or '$(Configuration)|$(Platform)'=='Release|ARM64EC'">
     <OutDir>bin\</OutDir>
-    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>C:\Users\mathg\source\repos\cswmm\SMC-Moon-Lander\obj\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64' or '$(Configuration)|$(Platform)'=='Debug|ARM64' or '$(Configuration)|$(Platform)'=='Debug|ARM64EC'">
@@ -377,16 +377,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\data\geo\rocketSmooth.mtl" />
-    <None Include="bin\data\geo\terrain.mtl" />
     <None Include="src\Octree.readme" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\octree-readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="bin\data\geo\rocketSmooth.obj" />
-    <Object Include="bin\data\geo\terrain.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>
