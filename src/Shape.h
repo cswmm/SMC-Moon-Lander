@@ -140,10 +140,8 @@ public:
 	}
 
 	glm::vec3 getCenter() {
-		glm::vec3 min = model.getSceneMin();
-		glm::vec3 max = model.getSceneMax();
-		model.getPosition();
-		return position + (min + max) * 0.5f;
+		float height = model.getSceneMax().y - model.getSceneMin().y;
+		return glm::vec3(position.x, position.y+(height/2), position.z);
 	}
 };
 

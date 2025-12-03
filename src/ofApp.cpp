@@ -162,16 +162,15 @@ void ofApp::update() {
 
 			glm::vec3 force = player.getCenter() - glm::vec3(center.x(), center.y(), center.z());
 
-			n += force;
+			n += glm::normalize(force);
 		}
-
 		n = glm::normalize(n);
+
 		ofVec3f v = player.velocity;
 		float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
-		float resolution = 0.1f;
+		float resolution = 1.0f;
 
-
-		if (mag < 0) {
+		if (mag < 0) { 
 			glm::vec3 p = (resolution + 1) * -mag * n;
 			player.velocity = ofVec3f(p.x, p.y, p.z);
 		}
@@ -269,6 +268,7 @@ void ofApp::draw() {
 	if (bPointSelected) {
 		ofSetColor(ofColor::blue);
 		ofDrawSphere(selectedPoint, .1);
+		cout << "selected point: " << selectedPoint << endl;
 	}
 
 	// recursively draw octree
@@ -294,6 +294,7 @@ void ofApp::draw() {
 		ofVec3f d = p - cam.getPosition();
 		ofSetColor(ofColor::lightGreen);
 		ofDrawSphere(p, .02 * d.length());
+		cout << "selected point: " << p << endl;
 	}
 
 	//emitter.draw();
@@ -542,7 +543,6 @@ void ofApp::mousePressed(int x, int y, int button) {
 		}
 		if (rayIntersected) {
 			ofDrawSphere(p, 100);
-			cout << p << endl;
 		}
 	}
 }
