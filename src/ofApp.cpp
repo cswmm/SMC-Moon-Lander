@@ -53,6 +53,27 @@ void ofApp::setup(){
 	star.setSpotlightCutOff(45);
 	star.setSpotConcentration(2);
 
+	fill.setPointLight();
+
+	fill.setPosition(0, 500, -1000);
+	
+
+	ofFloatColor fillColor(1, 0.7, 0.7, 1.0);
+	fill.setDiffuseColor(fillColor);
+	fill.setSpecularColor(ofFloatColor(0.5, 0.4, 0.4, 1.0));
+	fill.setAttenuation(1.0, 0, 0.0000005);
+
+	rim.setup();
+	rim.setSpotlight();
+	rim.setScale(.05);
+	rim.setSpotlightCutOff(90);
+	rim.setAttenuation(0.5, 0, .000001);
+	rim.setAmbientColor(ofFloatColor(0.1, 0.1, 0.1));
+	rim.setDiffuseColor(ofFloatColor(0.1, 0.1, 0.1));
+	rim.setSpecularColor(ofFloatColor(0.1, 0.1, 0.1));
+	rim.setPosition(1000, 300, 0);
+	rim.rotate(90, glm::vec3(0, 1, 0));
+
 	initLightingAndMaterials();
 
 	mars.loadModel("geo/terrain.obj");
@@ -222,6 +243,8 @@ void ofApp::draw() {
 	} else {
 		ofEnableLighting(); // shaded mode
 		star.enable();
+		fill.enable();
+		rim.enable();
 		mars.drawFaces();
 
 		ofMesh mesh;
@@ -273,7 +296,13 @@ void ofApp::draw() {
 
 	// recursively draw octree
 	//
+	star.draw();
+	fill.draw();
+	rim.draw();
+
 	star.disable();
+	fill.disable();
+	rim.disable();
 	ofDisableLighting();
 	int level = 0;
 	//	ofNoFill();

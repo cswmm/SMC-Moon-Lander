@@ -98,5 +98,7 @@ class ofApp : public ofBaseApp{
 
 
 		ofLight star;
+		ofLight fill;
+		ofLight rim;
 		ofLight landerLight;
 };
