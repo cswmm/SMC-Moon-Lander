@@ -3,6 +3,7 @@
 
 #include "ParticleSystem.h"
 #include "TransformObject.h"
+#include "Shape.h"
 
 typedef enum { DirectionalEmitter,
 	RadialEmitter,
@@ -11,7 +12,7 @@ typedef enum { DirectionalEmitter,
 //  General purpose Emitter class for emitting sprites
 //  This works similar to a Particle emitter
 //
-class ParticleEmitter : public TransformObject {
+class ParticleEmitter : public Shape {
 public:
 	ParticleEmitter();
 	ParticleEmitter(ParticleSystem * s);
@@ -36,5 +37,6 @@ public:
 	float radius;
 	bool visible;
 	bool createdSys;
+	bool active;
 	EmitterType type;
 };

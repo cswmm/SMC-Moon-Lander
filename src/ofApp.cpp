@@ -80,7 +80,7 @@ void ofApp::setup(){
 	cout << mars.getMeshCount() << endl;
 	mars.setScaleNormalization(false);
 
-	player.model.loadModel("geo/rocketSmooth.obj");
+	player.model.loadModel("geo/rocket.obj");
 	player.model.setScaleNormalization(false);
 	player.setPosition(1, 15, 0);
 
@@ -127,14 +127,12 @@ void ofApp::setup(){
 	bMovingLanderUp = false;
 	ofNoFill();
 
-	float gravity = 0.98;
-	gravityForce = new GravityForce(glm::vec3(0, -gravity, 0));
-	emitter.sys->addForce(gravityForce);
-
-	float turbulence = 0.2;
+	float turbulence = 20;
 	turbulenceForce = new TurbulenceForce(glm::vec3(-turbulence, -turbulence, -turbulence),
 		glm::vec3(float(turbulence), float(turbulence), float(turbulence)));
 	emitter.sys->addForce(turbulenceForce);
+
+	emitter.start();
 
 	craterLanding.setPosition(210, -20, 280);
 	craterLanding.setRadius(150);
@@ -158,6 +156,15 @@ void ofApp::setup(){
 //
 void ofApp::update() {
 
+	if ((player.bwdPressed || player.fwdPressed || player.upPressed || player.leftPressed || player.rightPressed)) {
+		emitter.active = true;
+	}
+
+	if ((!player.bwdPressed && !player.fwdPressed && !player.upPressed && !player.leftPressed && !player.rightPressed)) {
+		emitter.active = false;
+	}
+
+	emitter.setPosition(player.getPosition());
 	emitter.update();
 
 	craterLanding.integrate();
@@ -326,7 +333,7 @@ void ofApp::draw() {
 		cout << "selected point: " << p << endl;
 	}
 
-	//emitter.draw();
+	emitter.draw();
 
 	craterLanding.draw();
 	hillLanding.draw();
