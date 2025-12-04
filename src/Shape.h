@@ -25,6 +25,7 @@ public:
 	}
 
 	void setPosition(float x, float y, float z) { position = glm::vec3(x, y, z); }
+	void setPosition(glm::vec3 p) { position = p; }
 	glm::vec3 getPosition() { return position; }
 
 	virtual glm::vec3 getHeadingD() { return glm::vec3(0, 0, 0); }
@@ -85,7 +86,7 @@ public:
 	bool alive = true;
 	bool showHeading = true;
 
-	glm::vec3 gravity = glm::vec3(0, -4.3f, 0);
+	float gravity = -4.3f;
 
 	glm::vec3 headingP = glm::vec3(-5, 0, 0);
 
@@ -124,7 +125,7 @@ public:
 
 		force += (upf * glm::vec3(0, 1, 0) * upForce);
 		force += (movef * getHeadingD() * moveForce);
-		force += gravity;
+		force += glm::vec3(0, gravity, 0);
 
 		torque += t * torqueForce;
 
