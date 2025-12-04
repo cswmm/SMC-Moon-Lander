@@ -67,7 +67,7 @@ void ofApp::setup(){
 	rim.setSpotlight();
 	rim.setScale(.05);
 	rim.setSpotlightCutOff(90);
-	rim.setAttenuation(0.5, 0, .000001);
+	rim.setAttenuation(0.5, 0, .0000005);
 	rim.setAmbientColor(ofFloatColor(0.1, 0.1, 0.1));
 	rim.setDiffuseColor(ofFloatColor(0.1, 0.1, 0.1));
 	rim.setSpecularColor(ofFloatColor(0.1, 0.1, 0.1));
@@ -80,7 +80,7 @@ void ofApp::setup(){
 	cout << mars.getMeshCount() << endl;
 	mars.setScaleNormalization(false);
 
-	player.model.loadModel("geo/rocketSmooth.obj");
+	player.model.loadModel("geo/rocket.obj");
 	player.model.setScaleNormalization(false);
 	player.setPosition(1, 15, 0);
 
