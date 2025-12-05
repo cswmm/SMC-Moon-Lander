@@ -94,7 +94,11 @@ class ofApp : public ofBaseApp{
 		Landing hillLanding;
 		Landing flatLanding;
 		Landing holeLanding;
-		float currRot = 0;
+
+		Landing *landing;
+		std::array<Landing, 4> landingAreas;
+		float thrusterFuelLimit;
+		float agi;
 
 
 		ofLight star;

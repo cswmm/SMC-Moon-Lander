@@ -24,6 +24,8 @@ void ofApp::setup(){
 	bLanderLoaded = false;
 	bTerrainSelected = true;
 //	ofSetWindowShape(1024, 768);
+
+
 	cam.setDistance(10);
 	cam.setNearClip(1);
 	cam.setFov(65.5);   // approx equivalent to 28mm in 35mm format
@@ -149,6 +151,17 @@ void ofApp::setup(){
 	holeLanding.setPosition(-60, -80, -90);
 	holeLanding.setRadius(70);
 	holeLanding.setHeight(30);
+
+
+	thrusterFuelLimit = 120000; //2 minutes
+
+	landingAreas = { craterLanding, hillLanding, flatLanding, holeLanding };
+
+	int l = ofRandom(4);
+
+	cout << "Landing: " << l << endl;
+	landing = &landingAreas[l];
+	cout << "landing pos: " << landing->getPosition().x << " " << landing->getPosition().z << endl;
 }
  
 //--------------------------------------------------------------
@@ -167,15 +180,17 @@ void ofApp::update() {
 	emitter.setPosition(player.getPosition());
 	emitter.update();
 
-	craterLanding.integrate();
-	hillLanding.integrate();
-	flatLanding.integrate();
-	holeLanding.integrate();
+	landing->integrate();
 
 	ofVec3f min = player.model.getSceneMin() + player.getPosition();
 	ofVec3f max = player.model.getSceneMax() + player.getPosition();
 
 	Box bounds = Box(Vector3(min.x, min.y, min.z), Vector3(max.x, max.y, max.z));
+
+	glm::vec3 pos = player.getPosition();
+	TreeNode nodeRet;
+	octree.intersect(Ray(Vector3(pos.x, pos.y, pos.z), Vector3(pos.x, -1000, pos.z)), octree.root, nodeRet);
+	agi = pos.y - nodeRet.box.parameters->y();
 
 	colBoxList.clear();
 	octree.intersect(bounds, octree.root, colBoxList);
@@ -194,7 +209,20 @@ void ofApp::update() {
 		}
 		n = glm::normalize(n);
 
-		ofVec3f v = player.velocity;
+		glm::vec3 v = player.velocity;
+		float maxVelocity = 15;
+		if (glm::length(v) > maxVelocity) {
+			player.alive = false;
+			cout << "EXPLODED!" << endl;
+		} else {
+			glm::vec2 lpos = glm::vec2(landing->getPosition().x, landing->getPosition().z);
+			glm::vec2 ppos = glm::vec2(player.getPosition().x, player.getPosition().z);
+			if (agi < 3 && glm::distance(lpos, ppos) < landing->radius) {
+				player.alive = false;
+				cout << "LANDED SAFE!" << endl;
+			}
+		}
+
 		float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
 		float resolution = 1.0f;
 
@@ -205,6 +233,21 @@ void ofApp::update() {
 	}
 
 	player.integrate();
+	landerCam.setPosition(player.getPosition());
+	landerCam.lookAt(landing->getPosition());
+
+
+	if (player.alive) {
+		if (thrusterFuelLimit <= 0) {
+			player.alive = false;
+			thrusterFuelLimit = 0;
+			return;
+		}
+		if (player.fwdPressed || player.bwdPressed || player.leftPressed || player.rightPressed || player.upPressed) {
+			thrusterFuelLimit -= 1000 / ofGetFrameRate();
+		}
+	}
+
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -215,6 +258,9 @@ void ofApp::draw() {
 	glDepthMask(false);
 	if (!bHide) gui.draw();
 	glDepthMask(true);
+
+	ofDrawBitmapString("Fuel Left: " + to_string((int)std::round(thrusterFuelLimit/1000)) + " seconds", (ofGetWindowWidth() / 2)-50, 25);
+	ofDrawBitmapString("AGI: " + to_string(agi), (ofGetWindowWidth() / 2) - 50, 50);
 
 	switch (camSelection) {
 	case 0:
@@ -298,7 +344,6 @@ void ofApp::draw() {
 	if (bPointSelected) {
 		ofSetColor(ofColor::blue);
 		ofDrawSphere(selectedPoint, .1);
-		cout << "selected point: " << selectedPoint << endl;
 	}
 
 	// recursively draw octree
@@ -330,15 +375,16 @@ void ofApp::draw() {
 		ofVec3f d = p - cam.getPosition();
 		ofSetColor(ofColor::lightGreen);
 		ofDrawSphere(p, .02 * d.length());
-		cout << "selected point: " << p << endl;
+		//cout << "selected point: " << p << endl;
 	}
 
 	emitter.draw();
 
-	craterLanding.draw();
+	/* craterLanding.draw();
 	hillLanding.draw();
 	flatLanding.draw();
-	holeLanding.draw();
+	holeLanding.draw();*/
+	landing->draw();
 	ofPopMatrix();
 
 	switch (camSelection) {
@@ -615,7 +661,7 @@ void ofApp::mouseDragged(int x, int y, int button) {
 
 		glm::vec3 mousePos = getMousePointOnPlane(landerPos, cam.getZAxis());
 		glm::vec3 delta = mousePos - mouseLastPos;
-	
+
 		landerPos += delta;
 		player.setPosition(landerPos.x, landerPos.y, landerPos.z);
 		mouseLastPos = mousePos;
@@ -627,7 +673,6 @@ void ofApp::mouseDragged(int x, int y, int button) {
 
 		colBoxList.clear();
 		octree.intersect(bounds, octree.root, colBoxList);
-	
 
 		/*if (bounds.overlap(testBox)) {
 			cout << "overlap" << endl;
@@ -635,8 +680,6 @@ void ofApp::mouseDragged(int x, int y, int button) {
 		else {
 			cout << "OK" << endl;
 		}*/
-
-
 	} else {
 		ofVec3f p;
 		raySelectWithOctree(p);

@@ -92,9 +92,6 @@ public:
 
 	Player() { }
 	void draw() {
-		if (!alive) {
-			return;
-		}
 
 		ofPushMatrix();
 		ofMultMatrix(getTransform());
@@ -116,12 +113,13 @@ public:
 		float movef = 0;
 		float upf = 0;
 		float t = 0;
-
-		if (upPressed) upf += 1;
-		if (fwdPressed) movef += 1;
-		if (bwdPressed) movef -= 1;
-		if (leftPressed) t += 1;
-		if (rightPressed) t -= 1;
+		if (alive) {
+			if (upPressed) upf += 1;
+			if (fwdPressed) movef += 1;
+			if (bwdPressed) movef -= 1;
+			if (leftPressed) t += 1;
+			if (rightPressed) t -= 1;
+		}
 
 		force += (upf * glm::vec3(0, 1, 0) * upForce);
 		force += (movef * getHeadingD() * moveForce);
