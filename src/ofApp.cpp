@@ -132,9 +132,11 @@ void ofApp::setup(){
 	float turbulence = 20;
 	turbulenceForce = new TurbulenceForce(glm::vec3(-turbulence, -turbulence, -turbulence),
 		glm::vec3(float(turbulence), float(turbulence), float(turbulence)));
-	emitter.sys->addForce(turbulenceForce);
+	bottomThruster.sys->addForce(turbulenceForce);
+	backThruster.sys->addForce(turbulenceForce);
 
-	emitter.start();
+	bottomThruster.start();
+	backThruster.start();
 
 	craterLanding.setPosition(210, -20, 280);
 	craterLanding.setRadius(150);
@@ -169,16 +171,28 @@ void ofApp::setup(){
 //
 void ofApp::update() {
 
-	if ((player.bwdPressed || player.fwdPressed || player.upPressed || player.leftPressed || player.rightPressed)) {
-		emitter.active = true;
+	if ((player.bwdPressed || player.fwdPressed || player.leftPressed || player.rightPressed)) {
+		backThruster.active = true;
+		backThruster.setVelocity(-player.getHeadingD() * 10);
 	}
 
-	if ((!player.bwdPressed && !player.fwdPressed && !player.upPressed && !player.leftPressed && !player.rightPressed)) {
-		emitter.active = false;
+	if (player.upPressed) {
+		bottomThruster.active = true;
 	}
 
-	emitter.setPosition(player.getPosition());
-	emitter.update();
+	if ((!player.bwdPressed && !player.fwdPressed && !player.leftPressed && !player.rightPressed)) {
+		backThruster.active = false;
+	}
+
+	if (!player.upPressed) {
+		bottomThruster.active = false;
+	}
+
+	bottomThruster.setPosition(player.getPosition());
+	bottomThruster.update();
+
+	backThruster.setPosition(player.getBack());
+	backThruster.update();
 
 	landing->integrate();
 
@@ -253,7 +267,6 @@ void ofApp::update() {
 void ofApp::draw() {
 
 	ofBackground(ofColor::black);
-
 	
 	glDepthMask(false);
 	if (!bHide) gui.draw();
@@ -378,7 +391,8 @@ void ofApp::draw() {
 		//cout << "selected point: " << p << endl;
 	}
 
-	emitter.draw();
+	bottomThruster.draw();
+	backThruster.draw();
 
 	/* craterLanding.draw();
 	hillLanding.draw();

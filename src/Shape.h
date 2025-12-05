@@ -142,6 +142,10 @@ public:
 		float height = model.getSceneMax().y - model.getSceneMin().y;
 		return glm::vec3(position.x, position.y+(height/2), position.z);
 	}
+
+	glm::vec3 getBack() {
+		return glm::vec3(getTransform() * glm::vec4(-headingP/2, 1.0));
+	}
 };
 
 class Landing : public PhysicsObject {
