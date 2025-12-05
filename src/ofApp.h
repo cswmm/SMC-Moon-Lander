@@ -59,7 +59,8 @@ class ofApp : public ofBaseApp{
 		ofxToggle bTimingInfo;
 		ofxIntSlider camSelection;
 
-		ParticleEmitter emitter;
+		ParticleEmitter bottomThruster;
+		ParticleEmitter backThruster;
 		GravityForce * gravityForce;
 		TurbulenceForce * turbulenceForce;
 
