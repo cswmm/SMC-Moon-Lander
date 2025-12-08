@@ -27,8 +27,11 @@ public:
 	void setParticleRadius(const float r) { particleRadius = r; }
 	void setEmitterType(EmitterType t) { type = t; }
 	void update();
+	void spawn(float time);
 	ParticleSystem * sys;
 	float rate; // per sec
+	bool oneShot;
+	bool fired;
 	ofVec3f velocity;
 	float lifespan; // sec
 	bool started;
@@ -37,6 +40,7 @@ public:
 	float radius;
 	bool visible;
 	bool createdSys;
+	int groupSize;
 	bool active;
 	EmitterType type;
 };

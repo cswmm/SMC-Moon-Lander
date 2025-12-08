@@ -135,6 +135,17 @@ void ofApp::setup(){
 	bottomThruster.sys->addForce(turbulenceForce);
 	backThruster.sys->addForce(turbulenceForce);
 
+	bottomThruster.groupSize = 1;
+	backThruster.groupSize = 1;
+
+	radialForce = new ImpulseRadialForce(120.0);
+	explosionEmitter.sys->addForce(radialForce);
+	explosionEmitter.setVelocity(ofVec3f(0, 0, 0));
+	explosionEmitter.setEmitterType(RadialEmitter);
+	explosionEmitter.oneShot = true;
+	explosionEmitter.groupSize = 200;
+	explosionEmitter.setLifespan(0.9);
+
 	bottomThruster.start();
 	backThruster.start();
 
@@ -171,20 +182,20 @@ void ofApp::setup(){
 //
 void ofApp::update() {
 
-	if ((player.bwdPressed || player.fwdPressed || player.leftPressed || player.rightPressed)) {
+	if (player.alive and (player.bwdPressed || player.fwdPressed || player.leftPressed || player.rightPressed)) {
 		backThruster.active = true;
 		backThruster.setVelocity(-player.getHeadingD() * 10);
 	}
 
-	if (player.upPressed) {
+	if (player.alive and player.upPressed) {
 		bottomThruster.active = true;
 	}
 
-	if ((!player.bwdPressed && !player.fwdPressed && !player.leftPressed && !player.rightPressed)) {
+	if (player.alive and (!player.bwdPressed && !player.fwdPressed && !player.leftPressed && !player.rightPressed)) {
 		backThruster.active = false;
 	}
 
-	if (!player.upPressed) {
+	if (player.alive and !player.upPressed) {
 		bottomThruster.active = false;
 	}
 
@@ -193,6 +204,8 @@ void ofApp::update() {
 
 	backThruster.setPosition(player.getBack());
 	backThruster.update();
+
+	explosionEmitter.update();
 
 	landing->integrate();
 
@@ -224,10 +237,15 @@ void ofApp::update() {
 		n = glm::normalize(n);
 
 		glm::vec3 v = player.velocity;
-		float maxVelocity = 15;
+
+		float maxVelocity = abs(player.gravity);
 		if (glm::length(v) > maxVelocity) {
-			player.alive = false;
+			explosionEmitter.setPosition(player.getPosition());
+			explosionEmitter.start();
+			explosionEmitter.setVelocity(ofVec3f(10, 10, 10));
 			cout << "EXPLODED!" << endl;
+
+			player.alive = false;
 		} else {
 			glm::vec2 lpos = glm::vec2(landing->getPosition().x, landing->getPosition().z);
 			glm::vec2 ppos = glm::vec2(player.getPosition().x, player.getPosition().z);
@@ -238,7 +256,7 @@ void ofApp::update() {
 		}
 
 		float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
-		float resolution = 1.0f;
+		float resolution = 0.2f;
 
 		if (mag < 0) { 
 			glm::vec3 p = (resolution + 1) * -mag * n;
@@ -393,6 +411,7 @@ void ofApp::draw() {
 
 	bottomThruster.draw();
 	backThruster.draw();
+	explosionEmitter.draw();
 
 	/* craterLanding.draw();
 	hillLanding.draw();
@@ -481,6 +500,10 @@ void ofApp::keyPressed(int key) {
 		player.acceleration = glm::vec3(0, 0, 0);
 		player.velocity = glm::vec3(0, 0, 0);
 		player.rotVel = 0;
+		player.alive = true;
+
+		explosionEmitter.started = false;
+		explosionEmitter.fired = false;
 		//cam.reset();
 		break;
 	case 'p':
