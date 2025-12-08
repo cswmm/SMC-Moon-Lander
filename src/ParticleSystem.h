@@ -9,6 +9,8 @@
 class ParticleForce {
 public:
 	virtual void updateForce(Particle *) = 0;
+	bool applyOnce = false;
+	bool applied = false;
 };
 
 class ParticleSystem {
@@ -23,17 +25,6 @@ public:
 	vector<ParticleForce *> forces;
 };
 
-// Some convenient built-in forces
-//
-class GravityForce : public ParticleForce {
-	ofVec3f gravity;
-
-public:
-	GravityForce(const ofVec3f & gravity);
-	void set(glm::vec3 g) { gravity = g; }
-	void updateForce(Particle *);
-};
-
 class TurbulenceForce : public ParticleForce {
 	ofVec3f tmin, tmax;
 
@@ -43,5 +34,13 @@ public:
 		tmin = min;
 		tmax = max;
 	}
+	void updateForce(Particle *);
+};
+
+class ImpulseRadialForce : public ParticleForce {
+	float magnitude;
+
+public:
+	ImpulseRadialForce(float magnitude);
 	void updateForce(Particle *);
 };

@@ -60,19 +60,6 @@ void ParticleSystem::draw() {
 	}
 }
 
-// Gravity Force Field
-//
-GravityForce::GravityForce(const ofVec3f & g) {
-	gravity = g;
-}
-
-void GravityForce::updateForce(Particle * particle) {
-	//
-	// f = mg
-	//
-	particle->forces += gravity * particle->mass;
-}
-
 // Turbulence Force Field
 //
 TurbulenceForce::TurbulenceForce(const ofVec3f & min, const ofVec3f & max) {
@@ -88,4 +75,21 @@ void TurbulenceForce::updateForce(Particle * particle) {
 	particle->forces.x += ofRandom(tmin.x, tmax.x);
 	particle->forces.y += ofRandom(tmin.y, tmax.y);
 	particle->forces.z += ofRandom(tmin.z, tmax.z);
+}
+
+// Impulse Radial Force - this is a "one shot" force that
+// eminates radially outward in random directions.
+//
+ImpulseRadialForce::ImpulseRadialForce(float magnitude) {
+	this->magnitude = magnitude;
+	applyOnce = true;
+}
+
+void ImpulseRadialForce::updateForce(Particle * particle) {
+
+	// we basically create a random direction for each particle
+	// the force is only added once after it is triggered.
+	//
+	ofVec3f dir = ofVec3f(ofRandom(-1, 1), ofRandom(-1, 1), ofRandom(-1, 1));
+	particle->forces += dir.getNormalized() * magnitude;
 }

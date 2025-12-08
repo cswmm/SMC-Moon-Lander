@@ -61,8 +61,10 @@ class ofApp : public ofBaseApp{
 
 		ParticleEmitter bottomThruster;
 		ParticleEmitter backThruster;
-		GravityForce * gravityForce;
 		TurbulenceForce * turbulenceForce;
+		ImpulseRadialForce * radialForce;
+
+		ParticleEmitter explosionEmitter;
 
 		bool bAltKeyDown;
 		bool bWireframe;
