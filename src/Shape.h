@@ -160,6 +160,16 @@ public:
 	glm::vec3 getBack() {
 		return glm::vec3(getTransform() * glm::vec4(-headingP/2, 1.0));
 	}
+
+	void crash() {
+		alive = false;
+		force = glm::vec3(0);
+		torque = glm::vec3(0);
+		gravity = 0;
+		velocity = glm::vec3(0);
+		rotation.x = -10;
+		rotation.z = 20;
+	}
 };
 
 class Landing : public PhysicsObject {
@@ -187,7 +197,7 @@ public:
 	void integrate() {
 		float torqueForce = 150.0f*(radius/100);
 
-		torque += torqueForce * sin((ofGetElapsedTimef() * 0.5)+radius);
+		torque.y += torqueForce * sin((ofGetElapsedTimef() * 0.5)+radius);
 
 		PhysicsObject::integrate();
 	}

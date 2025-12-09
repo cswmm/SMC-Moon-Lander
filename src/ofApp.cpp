@@ -245,7 +245,7 @@ void ofApp::update() {
 			explosionEmitter.setVelocity(ofVec3f(10, 10, 10));
 			cout << "EXPLODED!" << endl;
 
-			player.alive = false;
+			player.crash();
 		} else {
 			glm::vec2 lpos = glm::vec2(landing->getPosition().x, landing->getPosition().z);
 			glm::vec2 ppos = glm::vec2(player.getPosition().x, player.getPosition().z);
@@ -499,8 +499,10 @@ void ofApp::keyPressed(int key) {
 		player.setPosition(1, 15, 0);
 		player.acceleration = glm::vec3(0);
 		player.velocity = glm::vec3(0);
-		player.rotVel = glm::vec3(0);	
+		player.rotVel = glm::vec3(0);
+		player.rotation = glm::vec3(0);
 		player.alive = true;
+		player.gravity = -4.3f;
 
 		explosionEmitter.started = false;
 		explosionEmitter.fired = false;
@@ -556,6 +558,19 @@ void ofApp::keyPressed(int key) {
 	case 'd':
 		player.rightPressed = true;
 		break;
+
+	// for testing rotation
+	//case 'i':
+	//	player.rotation.x += 5;
+	//	break;
+	//case 'j':
+	//	player.rotation.z -= 5;
+	//case 'k':
+	//	player.rotation.x -= 5;
+	//	break;
+	//case 'l':
+	//	player.rotation.z += 5;
+	//	break;
 	default:
 		break;
 	}
