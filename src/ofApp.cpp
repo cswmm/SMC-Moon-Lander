@@ -497,9 +497,9 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'r':
 		player.setPosition(1, 15, 0);
-		player.acceleration = glm::vec3(0, 0, 0);
-		player.velocity = glm::vec3(0, 0, 0);
-		player.rotVel = 0;
+		player.acceleration = glm::vec3(0);
+		player.velocity = glm::vec3(0);
+		player.rotVel = glm::vec3(0);	
 		player.alive = true;
 
 		explosionEmitter.started = false;
