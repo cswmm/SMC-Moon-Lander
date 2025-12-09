@@ -45,6 +45,18 @@ class PhysicsObject : public Shape {
 public:
 	PhysicsObject() { }
 
+	glm::mat4 getTransform() {
+		glm::mat4 T = glm::translate(glm::mat4(1.0), glm::vec3(position));
+
+		glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1, 0, 0));
+		glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0, 1, 0));
+		glm::mat4 Rz = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0, 0, 1));
+		glm::mat4 R = Rz * Ry * Rx;
+
+		glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+		return T * R * S;
+	}
+
 	void integrate() {
 		double dt = ofGetLastFrameTime();
 		position += velocity * dt;
@@ -52,13 +64,13 @@ public:
 		velocity += accel * dt;
 		velocity *= damping;
 
-		float angularAcc = rotAcc + (1.0f / moment) * torque;
+		glm::vec3 angularAcc = rotAcc + (1.0f / moment) * torque;
 		rotVel += angularAcc * dt;
 		rotVel *= damping;
 		rotation += rotVel * dt;
 
-		force = glm::vec3(0, 0, 0);
-		torque = 0.0f;
+		force = glm::vec3(0);
+		torque = glm::vec3(0);
 
 	}
 
@@ -68,10 +80,11 @@ public:
 	float damping = .995;
 	float mass = 1;
 
-	float rotVel = 0.0;
-	float rotAcc = 0.0;
-	float torque = 0.0;
-	float moment = 1.0;
+	glm::vec3 rotation = glm::vec3(0.0f);
+	glm::vec3 rotVel = glm::vec3(0.0f); 
+	glm::vec3 rotAcc = glm::vec3(0.0f); 
+	glm::vec3 torque = glm::vec3(0.0f); 
+	float moment = 1.0f;
 };
 
 class Player : public PhysicsObject {
@@ -91,6 +104,7 @@ public:
 	glm::vec3 headingP = glm::vec3(-5, 0, 0);
 
 	Player() { }
+
 	void draw() {
 
 		ofPushMatrix();
@@ -125,7 +139,7 @@ public:
 		force += (movef * getHeadingD() * moveForce);
 		force += glm::vec3(0, gravity, 0);
 
-		torque += t * torqueForce;
+		torque.y += t * torqueForce;
 
 		PhysicsObject::integrate();
 	}
@@ -145,6 +159,16 @@ public:
 
 	glm::vec3 getBack() {
 		return glm::vec3(getTransform() * glm::vec4(-headingP/2, 1.0));
+	}
+
+	void crash() {
+		alive = false;
+		force = glm::vec3(0);
+		torque = glm::vec3(0);
+		gravity = 0;
+		velocity = glm::vec3(0);
+		rotation.x = -10;
+		rotation.z = 20;
 	}
 };
 
@@ -173,7 +197,7 @@ public:
 	void integrate() {
 		float torqueForce = 150.0f*(radius/100);
 
-		torque += torqueForce * sin((ofGetElapsedTimef() * 0.5)+radius);
+		torque.y += torqueForce * sin((ofGetElapsedTimef() * 0.5)+radius);
 
 		PhysicsObject::integrate();
 	}
