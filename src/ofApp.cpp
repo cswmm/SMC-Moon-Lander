@@ -25,6 +25,7 @@ void ofApp::setup(){
 	bTerrainSelected = true;
 //	ofSetWindowShape(1024, 768);
 
+	shader.load("shadersGL3/shader");
 
 	cam.setDistance(10);
 	cam.setNearClip(1);
@@ -222,7 +223,7 @@ void ofApp::update() {
 	colBoxList.clear();
 	octree.intersect(bounds, octree.root, colBoxList);
 
-	if (colBoxList.size() >= 10) {
+	if (player.alive and colBoxList.size() >= 10) {
 
 		glm::vec3 n = glm::vec3(0, 0, 0);
 		for (int i = 0; i < colBoxList.size(); i++) {
@@ -253,14 +254,14 @@ void ofApp::update() {
 				player.alive = false;
 				cout << "LANDED SAFE!" << endl;
 			}
-		}
+			
+			float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
+			float resolution = 0.2f;
 
-		float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
-		float resolution = 0.2f;
-
-		if (mag < 0) { 
-			glm::vec3 p = (resolution + 1) * -mag * n;
-			player.velocity = ofVec3f(p.x, p.y, p.z);
+			if (mag < 0) {
+				glm::vec3 p = (resolution + 1) * -mag * n;
+				player.velocity = ofVec3f(p.x, p.y, p.z);
+			}
 		}
 	}
 
@@ -409,9 +410,14 @@ void ofApp::draw() {
 		//cout << "selected point: " << p << endl;
 	}
 
+	shader.begin();
+	shader.setUniform3f("thrustColor", 1.0, 0.5, 0.0);
+
 	bottomThruster.draw();
 	backThruster.draw();
 	explosionEmitter.draw();
+
+	shader.end();
 
 	/* craterLanding.draw();
 	hillLanding.draw();

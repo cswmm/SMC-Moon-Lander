@@ -93,6 +93,8 @@ class ofApp : public ofBaseApp{
 
 		ofCamera landerCam;
 
+		ofShader shader;
+
 		Landing craterLanding;
 		Landing hillLanding;
 		Landing flatLanding;
@@ -102,7 +104,6 @@ class ofApp : public ofBaseApp{
 		std::array<Landing, 4> landingAreas;
 		float thrusterFuelLimit;
 		float agi;
-
 
 		ofLight star;
 		ofLight fill;
