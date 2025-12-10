@@ -105,4 +105,8 @@ class ofApp : public ofBaseApp{
 		ofLight fill;
 		ofLight rim;
 		ofLight landerLight;
+
+		ofSoundPlayer engineThrust;
+		ofSoundPlayer playerDeath;
+		ofImage background;
 };

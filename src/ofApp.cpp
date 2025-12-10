@@ -111,7 +111,7 @@ void ofApp::setup(){
 		uint64_t end = ofGetElapsedTimeMillis();
 		cout << "Time to build the tree: " << end - start << " ms" << endl;
 	} else {
-		octree.create(mars.getMesh(0), 20);
+		octree.create(mars.getMesh(1), 20);
 	}
 	
 	cout << "Number of Verts: " << mars.getMesh(0).getNumVertices() << endl;
@@ -162,6 +162,12 @@ void ofApp::setup(){
 	cout << "Landing: " << l << endl;
 	landing = &landingAreas[l];
 	cout << "landing pos: " << landing->getPosition().x << " " << landing->getPosition().z << endl;
+
+	engineThrust.load("sounds/thrust.mp3");
+	engineThrust.setLoop(true);
+	playerDeath.load("sounds/astdestroy.mp3");
+
+	background.load("images/house.jpg");
 }
  
 //--------------------------------------------------------------
@@ -252,12 +258,9 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
 
-	ofBackground(ofColor::black);
+	background.draw(ofGetScreenWidth(), ofGetScreenHeight());
 
 	
-	glDepthMask(false);
-	if (!bHide) gui.draw();
-	glDepthMask(true);
 
 	ofDrawBitmapString("Fuel Left: " + to_string((int)std::round(thrusterFuelLimit/1000)) + " seconds", (ofGetWindowWidth() / 2)-50, 25);
 	ofDrawBitmapString("AGI: " + to_string(agi), (ofGetWindowWidth() / 2) - 50, 50);
@@ -404,6 +407,10 @@ void ofApp::draw() {
 		cam.end();
 		break;
 	}
+
+	glDepthMask(false);
+	if (!bHide) gui.draw();
+	glDepthMask(true);
 }
 
 // 
