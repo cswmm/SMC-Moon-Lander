@@ -163,12 +163,9 @@ public:
 
 	void crash() {
 		alive = false;
-		force = glm::vec3(0);
-		torque = glm::vec3(0);
+		force += glm::vec3(10000);
+		torque += glm::vec3(10000);
 		gravity = 0;
-		velocity = glm::vec3(0);
-		rotation.x = -10;
-		rotation.z = 20;
 	}
 };
 
