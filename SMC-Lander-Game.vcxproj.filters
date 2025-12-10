@@ -460,6 +460,8 @@
     <None Include="src\Octree.readme">
       <Filter>src</Filter>
     </None>
+    <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.frag" />
+    <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\octree-readme.txt">

@@ -23,9 +23,25 @@ void ofApp::setup(){
 	bAltKeyDown = false;
 	bLanderLoaded = false;
 	bTerrainSelected = true;
-//	ofSetWindowShape(1024, 768);
 
-	shader.load("shadersGL3/shader");
+	// texture loading
+	//
+	ofDisableArbTex(); // disable rectangular textures
+
+	// load textures
+	//
+	if (!ofLoadImage(particleTex, "images/dot.png")) {
+		cout << "Particle Texture File: images/dot.png not found" << endl;
+		ofExit();
+	}
+
+	// load the shader
+	//
+#ifdef TARGET_OPENGLES
+	shader.load("shaders_gles/shader");
+#else
+	shader.load("shaders/shader");
+#endif
 
 	cam.setDistance(10);
 	cam.setNearClip(1);
@@ -136,15 +152,15 @@ void ofApp::setup(){
 	bottomThruster.sys->addForce(turbulenceForce);
 	backThruster.sys->addForce(turbulenceForce);
 
-	bottomThruster.groupSize = 1;
-	backThruster.groupSize = 1;
+	bottomThruster.groupSize = 10;
+	backThruster.groupSize = 10;
 
 	radialForce = new ImpulseRadialForce(120.0);
 	explosionEmitter.sys->addForce(radialForce);
 	explosionEmitter.setVelocity(ofVec3f(0, 0, 0));
 	explosionEmitter.setEmitterType(RadialEmitter);
 	explosionEmitter.oneShot = true;
-	explosionEmitter.groupSize = 200;
+	explosionEmitter.groupSize = 500;
 	explosionEmitter.setLifespan(0.9);
 
 	bottomThruster.start();
@@ -177,9 +193,57 @@ void ofApp::setup(){
 	landing = &landingAreas[l];
 	cout << "landing pos: " << landing->getPosition().x << " " << landing->getPosition().z << endl;
 }
- 
+
+// load vertex buffer in preparation for rendering
+//
+void ofApp::loadVbo() {
+	if (bottomThruster.sys->particles.size() > 0) {
+		vector<ofVec3f> sizes;
+		vector<ofVec3f> points;
+		for (int i = 0; i < bottomThruster.sys->particles.size(); i++) {
+			points.push_back(bottomThruster.sys->particles[i].position);
+			sizes.push_back(ofVec3f(particleRadius));
+		}
+		// upload the data to the vbo
+		//
+		int total = (int)points.size();
+		bottomVbo.clear();
+		bottomVbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+		bottomVbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+	}
+
+	if (backThruster.sys->particles.size() > 0) {
+		vector<ofVec3f> sizes;
+		vector<ofVec3f> points;
+		for (int i = 0; i < backThruster.sys->particles.size(); i++) {
+			points.push_back(backThruster.sys->particles[i].position);
+			sizes.push_back(ofVec3f(particleRadius));
+		}
+		// upload the data to the vbo
+		//
+		int total = (int)points.size();
+		backVbo.clear();
+		backVbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+		backVbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+	}
+
+	if (explosionEmitter.sys->particles.size() > 0) {
+		vector<ofVec3f> sizes;
+		vector<ofVec3f> points;
+		for (int i = 0; i < explosionEmitter.sys->particles.size(); i++) {
+			points.push_back(explosionEmitter.sys->particles[i].position);
+			sizes.push_back(ofVec3f(particleRadius));
+		}
+		// upload the data to the vbo
+		//
+		int total = (int)points.size();
+		explosionVbo.clear();
+		explosionVbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+		explosionVbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+	}
+}
+
 //--------------------------------------------------------------
-// incrementally update scene (animation)
 //
 void ofApp::update() {
 
@@ -285,6 +349,7 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
 
+	loadVbo();
 	ofBackground(ofColor::black);
 	
 	glDepthMask(false);
@@ -410,12 +475,9 @@ void ofApp::draw() {
 		//cout << "selected point: " << p << endl;
 	}
 
-	shader.begin();
-	shader.setUniform3f("thrustColor", 1.0, 0.5, 0.0);
-
-	bottomThruster.draw();
-	backThruster.draw();
-	explosionEmitter.draw();
+	//bottomThruster.draw();
+	//backThruster.draw();
+	//explosionEmitter.draw();
 
 	shader.end();
 
@@ -443,6 +505,39 @@ void ofApp::draw() {
 		cam.end();
 		break;
 	}
+	
+	glDepthMask(GL_FALSE);
+
+	ofSetColor(255, 100, 90);
+
+	// this makes everything look glowy :)
+	//
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	ofEnablePointSprites();
+
+	// begin drawing in the camera
+	//
+	shader.begin();
+	cam.begin();
+
+	// draw particle emitter here..
+	//
+	particleTex.bind();
+	bottomVbo.draw(GL_POINTS, 0, (int)bottomThruster.sys->particles.size());
+	backVbo.draw(GL_POINTS, 0, (int)backThruster.sys->particles.size());
+	explosionVbo.draw(GL_POINTS, 0, (int)explosionEmitter.sys->particles.size());
+	particleTex.unbind();
+
+	cam.end();
+	shader.end();
+
+	ofDisablePointSprites();
+	ofDisableBlendMode();
+	ofEnableAlphaBlending();
+
+	// set back the depth mask
+	//
+	glDepthMask(GL_TRUE);
 }
 
 // 

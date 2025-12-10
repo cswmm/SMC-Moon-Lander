@@ -29,6 +29,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent2(ofDragInfo dragInfo);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+		void loadVbo();
 		void drawAxis(ofVec3f);
 		void initLightingAndMaterials();
 		void savePicture();
@@ -66,6 +67,11 @@ class ofApp : public ofBaseApp{
 
 		ParticleEmitter explosionEmitter;
 
+		ofVbo bottomVbo;
+		ofVbo backVbo;
+		ofVbo explosionVbo;
+		ofShader shader;
+
 		bool bAltKeyDown;
 		bool bWireframe;
 		bool bDisplayPoints;
@@ -93,8 +99,6 @@ class ofApp : public ofBaseApp{
 
 		ofCamera landerCam;
 
-		ofShader shader;
-
 		Landing craterLanding;
 		Landing hillLanding;
 		Landing flatLanding;
@@ -109,4 +113,7 @@ class ofApp : public ofBaseApp{
 		ofLight fill;
 		ofLight rim;
 		ofLight landerLight;
+
+		ofTexture particleTex;
+		float particleRadius = 10.0f;
 };

@@ -377,6 +377,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.frag" />
+    <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.vert" />
     <None Include="src\Octree.readme" />
   </ItemGroup>
   <ItemGroup>
