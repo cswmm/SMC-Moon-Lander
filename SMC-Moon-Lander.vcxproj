@@ -382,6 +382,13 @@
   <ItemGroup>
     <Text Include="src\octree-readme.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="bin\data\images\house.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="bin\data\sounds\astdestroy.mp3" />
+    <Media Include="bin\data\sounds\thrust.mp3" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>
     <VisualStudio>

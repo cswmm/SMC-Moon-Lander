@@ -466,4 +466,11 @@
       <Filter>src</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="bin\data\images\house.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="bin\data\sounds\astdestroy.mp3" />
+    <Media Include="bin\data\sounds\thrust.mp3" />
+  </ItemGroup>
 </Project>
