@@ -132,9 +132,22 @@ void ofApp::setup(){
 	float turbulence = 20;
 	turbulenceForce = new TurbulenceForce(glm::vec3(-turbulence, -turbulence, -turbulence),
 		glm::vec3(float(turbulence), float(turbulence), float(turbulence)));
-	emitter.sys->addForce(turbulenceForce);
+	bottomThruster.sys->addForce(turbulenceForce);
+	backThruster.sys->addForce(turbulenceForce);
 
-	emitter.start();
+	bottomThruster.groupSize = 1;
+	backThruster.groupSize = 1;
+
+	radialForce = new ImpulseRadialForce(120.0);
+	explosionEmitter.sys->addForce(radialForce);
+	explosionEmitter.setVelocity(ofVec3f(0, 0, 0));
+	explosionEmitter.setEmitterType(RadialEmitter);
+	explosionEmitter.oneShot = true;
+	explosionEmitter.groupSize = 200;
+	explosionEmitter.setLifespan(0.9);
+
+	bottomThruster.start();
+	backThruster.start();
 
 	craterLanding.setPosition(210, -20, 280);
 	craterLanding.setRadius(150);
@@ -175,16 +188,30 @@ void ofApp::setup(){
 //
 void ofApp::update() {
 
-	if ((player.bwdPressed || player.fwdPressed || player.upPressed || player.leftPressed || player.rightPressed)) {
-		emitter.active = true;
+	if (player.alive and (player.bwdPressed || player.fwdPressed || player.leftPressed || player.rightPressed)) {
+		backThruster.active = true;
+		backThruster.setVelocity(-player.getHeadingD() * 10);
 	}
 
-	if ((!player.bwdPressed && !player.fwdPressed && !player.upPressed && !player.leftPressed && !player.rightPressed)) {
-		emitter.active = false;
+	if (player.alive and player.upPressed) {
+		bottomThruster.active = true;
 	}
 
-	emitter.setPosition(player.getPosition());
-	emitter.update();
+	if (player.alive and (!player.bwdPressed && !player.fwdPressed && !player.leftPressed && !player.rightPressed)) {
+		backThruster.active = false;
+	}
+
+	if (player.alive and !player.upPressed) {
+		bottomThruster.active = false;
+	}
+
+	bottomThruster.setPosition(player.getPosition());
+	bottomThruster.update();
+
+	backThruster.setPosition(player.getBack());
+	backThruster.update();
+
+	explosionEmitter.update();
 
 	landing->integrate();
 
@@ -216,10 +243,15 @@ void ofApp::update() {
 		n = glm::normalize(n);
 
 		glm::vec3 v = player.velocity;
-		float maxVelocity = 15;
+
+		float maxVelocity = abs(player.gravity);
 		if (glm::length(v) > maxVelocity) {
-			player.alive = false;
+			explosionEmitter.setPosition(player.getPosition());
+			explosionEmitter.start();
+			explosionEmitter.setVelocity(ofVec3f(10, 10, 10));
 			cout << "EXPLODED!" << endl;
+
+			player.crash();
 		} else {
 			glm::vec2 lpos = glm::vec2(landing->getPosition().x, landing->getPosition().z);
 			glm::vec2 ppos = glm::vec2(player.getPosition().x, player.getPosition().z);
@@ -230,7 +262,7 @@ void ofApp::update() {
 		}
 
 		float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
-		float resolution = 1.0f;
+		float resolution = 0.2f;
 
 		if (mag < 0) { 
 			glm::vec3 p = (resolution + 1) * -mag * n;
@@ -381,7 +413,9 @@ void ofApp::draw() {
 		//cout << "selected point: " << p << endl;
 	}
 
-	emitter.draw();
+	bottomThruster.draw();
+	backThruster.draw();
+	explosionEmitter.draw();
 
 	/* craterLanding.draw();
 	hillLanding.draw();
@@ -471,9 +505,15 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'r':
 		player.setPosition(1, 15, 0);
-		player.acceleration = glm::vec3(0, 0, 0);
-		player.velocity = glm::vec3(0, 0, 0);
-		player.rotVel = 0;
+		player.acceleration = glm::vec3(0);
+		player.velocity = glm::vec3(0);
+		player.rotVel = glm::vec3(0);
+		player.rotation = glm::vec3(0);
+		player.alive = true;
+		player.gravity = -4.3f;
+
+		explosionEmitter.started = false;
+		explosionEmitter.fired = false;
 		//cam.reset();
 		break;
 	case 'p':
@@ -526,6 +566,19 @@ void ofApp::keyPressed(int key) {
 	case 'd':
 		player.rightPressed = true;
 		break;
+
+	// for testing rotation
+	//case 'i':
+	//	player.rotation.x += 5;
+	//	break;
+	//case 'j':
+	//	player.rotation.z -= 5;
+	//case 'k':
+	//	player.rotation.x -= 5;
+	//	break;
+	//case 'l':
+	//	player.rotation.z += 5;
+	//	break;
 	default:
 		break;
 	}
