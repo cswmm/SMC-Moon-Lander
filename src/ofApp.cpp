@@ -143,7 +143,6 @@ void ofApp::setup(){
 	boxColors.push_back(ofColor::indigo);
 	boxColors.push_back(ofColor::violet);
 
-	bMovingLanderUp = false;
 	ofNoFill();
 
 	float turbulence = 20;
@@ -617,8 +616,6 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'u':
 	{
-		if (colBoxList.size() >= 10) bMovingLanderUp = true;
-		break;
 	}
 	case 'v':
 		togglePointsDisplay();

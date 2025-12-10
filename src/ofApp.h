@@ -84,7 +84,6 @@ class ofApp : public ofBaseApp{
 		
 		bool bLanderLoaded;
 		bool bTerrainSelected;
-		bool bMovingLanderUp;
 	
 		ofVec3f selectedPoint;
 		ofVec3f intersectPoint;
@@ -115,5 +114,5 @@ class ofApp : public ofBaseApp{
 		ofLight landerLight;
 
 		ofTexture particleTex;
-		float particleRadius = 10.0f;
+		float particleRadius = 100.0f;
 };
