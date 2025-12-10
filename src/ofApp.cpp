@@ -151,15 +151,15 @@ void ofApp::setup(){
 	bottomThruster.sys->addForce(turbulenceForce);
 	backThruster.sys->addForce(turbulenceForce);
 
-	bottomThruster.groupSize = 10;
-	backThruster.groupSize = 10;
+	bottomThruster.groupSize = 20;
+	backThruster.groupSize = 20;
 
 	radialForce = new ImpulseRadialForce(120.0);
 	explosionEmitter.sys->addForce(radialForce);
 	explosionEmitter.setVelocity(ofVec3f(0, 0, 0));
 	explosionEmitter.setEmitterType(RadialEmitter);
 	explosionEmitter.oneShot = true;
-	explosionEmitter.groupSize = 500;
+	explosionEmitter.groupSize = 1000;
 	explosionEmitter.setLifespan(0.9);
 
 	bottomThruster.start();
@@ -473,12 +473,6 @@ void ofApp::draw() {
 		ofDrawSphere(p, .02 * d.length());
 		//cout << "selected point: " << p << endl;
 	}
-
-	//bottomThruster.draw();
-	//backThruster.draw();
-	//explosionEmitter.draw();
-
-	shader.end();
 
 	/* craterLanding.draw();
 	hillLanding.draw();

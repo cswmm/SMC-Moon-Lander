@@ -114,5 +114,5 @@ class ofApp : public ofBaseApp{
 		ofLight landerLight;
 
 		ofTexture particleTex;
-		float particleRadius = 100.0f;
+		float particleRadius = 5.0f;
 };
