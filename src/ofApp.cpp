@@ -368,7 +368,7 @@ void ofApp::draw() {
 	ofEnableDepthTest();
 
 	if (gameEnded) {
-		ofDrawBitmapString("Landed Successfully!", ofGetWindowSize() / 2);
+		ofDrawBitmapString("Landed Successfully! Total score: " + to_string(120000-thrusterFuelLimit), ofGetWindowSize() / 2);
 		return;
 	}
 
