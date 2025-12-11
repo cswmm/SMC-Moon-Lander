@@ -47,7 +47,7 @@ public:
 
 	glm::mat4 getTransform() {
 		glm::mat4 T = glm::translate(glm::mat4(1.0), glm::vec3(position));
-
+		// 3d rotation using Euler angles -- nathan
 		glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1, 0, 0));
 		glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0, 1, 0));
 		glm::mat4 Rz = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0, 0, 1));
@@ -89,6 +89,7 @@ public:
 
 class Player : public PhysicsObject {
 public:
+	// player additions -- nathan
 	ofxAssimpModelLoader model;
 
 	bool fwdPressed = false;
@@ -97,7 +98,7 @@ public:
 	bool leftPressed = false;
 	bool rightPressed = false;
 	bool alive = true;
-	bool showHeading = true;
+	bool showHeading = false;
 
 	float gravity = -4.3f;
 
@@ -134,7 +135,7 @@ public:
 			if (leftPressed) t += 1;
 			if (rightPressed) t -= 1;
 		}
-
+		// forces adapted for 3d -- nathan
 		force += (upf * glm::vec3(0, 1, 0) * upForce);
 		force += (movef * getHeadingD() * moveForce);
 		force += glm::vec3(0, gravity, 0);
@@ -152,6 +153,7 @@ public:
 		return glm::vec3(getTransform() * glm::vec4(headingP, 1.0));
 	}
 
+	// new methods for thruster positions -- nathan
 	glm::vec3 getCenter() {
 		float height = model.getSceneMax().y - model.getSceneMin().y;
 		return glm::vec3(position.x, position.y+(height/2), position.z);
@@ -161,6 +163,7 @@ public:
 		return glm::vec3(getTransform() * glm::vec4(-headingP/2, 1.0));
 	}
 
+	// for too hard of a landing and catapulting the ship -- nathan
 	void crash() {
 		alive = false;
 		force += glm::vec3(10000);

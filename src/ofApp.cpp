@@ -24,7 +24,7 @@ void ofApp::setup(){
 	bLanderLoaded = false;
 	bTerrainSelected = true;
 
-	// texture loading
+	// texture and shader loading - nathan
 	//
 	ofDisableArbTex(); // disable rectangular textures
 
@@ -200,8 +200,8 @@ void ofApp::setup(){
 	cout << load << endl;
 }
 
-// load vertex buffer in preparation for rendering
-//
+// load vertex buffer in preparation for rendering 
+// - nathan
 void ofApp::loadVbo() {
 	if (bottomThruster.sys->particles.size() > 0) {
 		vector<ofVec3f> sizes;
@@ -252,7 +252,8 @@ void ofApp::loadVbo() {
 //--------------------------------------------------------------
 //
 void ofApp::update() {
-	//Check if Player is moving left/right/fws/bwd
+	// player movement checks - nathan
+	//Check if Player is moving left/right/fws/bwd 
 	if (player.alive and (player.bwdPressed || player.fwdPressed || player.leftPressed || player.rightPressed)) {
 		backThruster.active = true;
 		backThruster.setVelocity(-player.getHeadingD() * 10);
@@ -293,6 +294,7 @@ void ofApp::update() {
 	colBoxList.clear();
 	octree.intersect(bounds, octree.root, colBoxList);
 	//If Collided and is alive
+	// resolving collisions - nathan
 	if (player.alive and colBoxList.size() >= 10) {
 
 		glm::vec3 n = glm::vec3(0, 0, 0);
