@@ -358,7 +358,6 @@
     <ClInclude Include="src\Particle.h" />
     <ClInclude Include="src\ParticleEmitter.h" />
     <ClInclude Include="src\ParticleSystem.h" />
-    <ClInclude Include="src\Primitives.h" />
     <ClInclude Include="src\ray.h" />
     <ClInclude Include="src\Shape.h" />
     <ClInclude Include="src\TransformObject.h" />
@@ -379,10 +378,6 @@
   <ItemGroup>
     <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.frag" />
     <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.vert" />
-    <None Include="src\Octree.readme" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\octree-readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>
