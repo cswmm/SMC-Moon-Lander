@@ -361,6 +361,9 @@ void ofApp::update() {
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
+
+	ofSetColor(ofColor::white);
+
 	loadVbo();
 
 	ofDisableDepthTest();

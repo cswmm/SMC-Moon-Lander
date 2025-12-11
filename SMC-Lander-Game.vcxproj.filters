@@ -434,9 +434,6 @@
     <ClInclude Include="src\ParticleSystem.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Primitives.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\ray.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -457,15 +454,7 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Octree.readme">
-      <Filter>src</Filter>
-    </None>
     <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.frag" />
     <None Include="..\..\..\..\..\..\Downloads\radialEmitterExample\radialEmitterExample\bin\data\shader.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\octree-readme.txt">
-      <Filter>src</Filter>
-    </Text>
   </ItemGroup>
 </Project>
