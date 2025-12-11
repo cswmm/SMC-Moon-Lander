@@ -338,9 +338,12 @@ void ofApp::update() {
 		}
 	}
 	//Integrate player and attach landing cam.
-	player.integrate();
-	landerCam.setPosition(player.getPosition());
-	landerCam.lookAt(landing->getPosition());
+	if (!bInDrag) {
+		player.integrate();
+		landerCam.setPosition(player.getPosition());
+		landerCam.lookAt(landing->getPosition());
+	}
+
 	//Play thrust audio
 	if ((bottomThruster.active || backThruster.active) && !engineThrust.isPlaying()) {
 		engineThrust.play();
