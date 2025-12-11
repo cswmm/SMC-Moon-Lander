@@ -262,11 +262,11 @@ void ofApp::update() {
 		bottomThruster.active = true;
 	}
 
-	if (player.alive and (!player.bwdPressed && !player.fwdPressed && !player.leftPressed && !player.rightPressed)) {
+	if ((!player.bwdPressed && !player.fwdPressed && !player.leftPressed && !player.rightPressed)) {
 		backThruster.active = false;
 	}
 
-	if (player.alive and !player.upPressed) {
+	if (!player.upPressed) {
 		bottomThruster.active = false;
 	}
 
@@ -361,15 +361,11 @@ void ofApp::update() {
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
-<<<<<<< HEAD
-
 	loadVbo();
-	ofBackground(ofColor::black);
-=======
+
 	ofDisableDepthTest();
 	background.draw(0,0,ofGetScreenWidth(), ofGetScreenHeight());
 	ofEnableDepthTest();
->>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 	
 
 	ofDrawBitmapString("Fuel Left: " + to_string((int)std::round(thrusterFuelLimit/1000)) + " seconds", (ofGetWindowWidth() / 2)-50, 25);
@@ -512,8 +508,7 @@ void ofApp::draw() {
 		cam.end();
 		break;
 	}
-<<<<<<< HEAD
-	
+
 	glDepthMask(GL_FALSE);
 
 	ofSetColor(255, 100, 90);
@@ -543,15 +538,9 @@ void ofApp::draw() {
 	ofDisableBlendMode();
 	ofEnableAlphaBlending();
 
-	// set back the depth mask
-	//
-	glDepthMask(GL_TRUE);
-=======
-
 	glDepthMask(false);
 	if (!bHide) gui.draw();
 	glDepthMask(true);
->>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 }
 
 // 
