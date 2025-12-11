@@ -340,10 +340,10 @@ void ofApp::update() {
 	//Integrate player and attach landing cam.
 	if (!bInDrag) {
 		player.integrate();
-		landerCam.setPosition(player.getPosition());
-		landerCam.lookAt(landing->getPosition());
 	}
-
+  landerCam.setPosition(player.getPosition());
+  landerCam.lookAt(landing->getPosition());
+  fixedCam2.lookAt(player.getPosition());
 	//Play thrust audio
 	if ((bottomThruster.active || backThruster.active) && !engineThrust.isPlaying()) {
 		engineThrust.play();
@@ -376,7 +376,7 @@ void ofApp::draw() {
 	ofEnableDepthTest();
 
 	if (gameEnded) {
-		ofDrawBitmapString("Landed Successfully!", ofGetWindowSize() / 2);
+		ofDrawBitmapString("Landed Successfully! Total score: " + to_string(120000-thrusterFuelLimit), ofGetWindowSize() / 2);
 		return;
 	}
 
@@ -708,18 +708,6 @@ void ofApp::keyPressed(int key) {
 		player.rightPressed = true;
 		break;
 
-	// for testing rotation
-	//case 'i':
-	//	player.rotation.x += 5;
-	//	break;
-	//case 'j':
-	//	player.rotation.z -= 5;
-	//case 'k':
-	//	player.rotation.x -= 5;
-	//	break;
-	//case 'l':
-	//	player.rotation.z += 5;
-	//	break;
 	case '1':
 		camSelection = 0;
 		break;
