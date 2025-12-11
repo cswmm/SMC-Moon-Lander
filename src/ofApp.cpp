@@ -23,8 +23,25 @@ void ofApp::setup(){
 	bAltKeyDown = false;
 	bLanderLoaded = false;
 	bTerrainSelected = true;
-//	ofSetWindowShape(1024, 768);
 
+	// texture loading
+	//
+	ofDisableArbTex(); // disable rectangular textures
+
+	// load textures
+	//
+	if (!ofLoadImage(particleTex, "images/dot.png")) {
+		cout << "Particle Texture File: images/dot.png not found" << endl;
+		ofExit();
+	}
+
+	// load the shader
+	//
+#ifdef TARGET_OPENGLES
+	shader.load("shaders_gles/shader");
+#else
+	shader.load("shaders/shader");
+#endif
 
 	cam.setDistance(10);
 	cam.setNearClip(1);
@@ -126,7 +143,6 @@ void ofApp::setup(){
 	boxColors.push_back(ofColor::indigo);
 	boxColors.push_back(ofColor::violet);
 
-	bMovingLanderUp = false;
 	ofNoFill();
 
 	float turbulence = 20;
@@ -135,15 +151,15 @@ void ofApp::setup(){
 	bottomThruster.sys->addForce(turbulenceForce);
 	backThruster.sys->addForce(turbulenceForce);
 
-	bottomThruster.groupSize = 1;
-	backThruster.groupSize = 1;
+	bottomThruster.groupSize = 20;
+	backThruster.groupSize = 20;
 
 	radialForce = new ImpulseRadialForce(120.0);
 	explosionEmitter.sys->addForce(radialForce);
 	explosionEmitter.setVelocity(ofVec3f(0, 0, 0));
 	explosionEmitter.setEmitterType(RadialEmitter);
 	explosionEmitter.oneShot = true;
-	explosionEmitter.groupSize = 200;
+	explosionEmitter.groupSize = 1000;
 	explosionEmitter.setLifespan(0.9);
 
 	bottomThruster.start();
@@ -183,9 +199,57 @@ void ofApp::setup(){
 	bool load = background.load("images/house.jpg");
 	cout << load << endl;
 }
- 
+
+// load vertex buffer in preparation for rendering
+//
+void ofApp::loadVbo() {
+	if (bottomThruster.sys->particles.size() > 0) {
+		vector<ofVec3f> sizes;
+		vector<ofVec3f> points;
+		for (int i = 0; i < bottomThruster.sys->particles.size(); i++) {
+			points.push_back(bottomThruster.sys->particles[i].position);
+			sizes.push_back(ofVec3f(particleRadius));
+		}
+		// upload the data to the vbo
+		//
+		int total = (int)points.size();
+		bottomVbo.clear();
+		bottomVbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+		bottomVbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+	}
+
+	if (backThruster.sys->particles.size() > 0) {
+		vector<ofVec3f> sizes;
+		vector<ofVec3f> points;
+		for (int i = 0; i < backThruster.sys->particles.size(); i++) {
+			points.push_back(backThruster.sys->particles[i].position);
+			sizes.push_back(ofVec3f(particleRadius));
+		}
+		// upload the data to the vbo
+		//
+		int total = (int)points.size();
+		backVbo.clear();
+		backVbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+		backVbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+	}
+
+	if (explosionEmitter.sys->particles.size() > 0) {
+		vector<ofVec3f> sizes;
+		vector<ofVec3f> points;
+		for (int i = 0; i < explosionEmitter.sys->particles.size(); i++) {
+			points.push_back(explosionEmitter.sys->particles[i].position);
+			sizes.push_back(ofVec3f(particleRadius));
+		}
+		// upload the data to the vbo
+		//
+		int total = (int)points.size();
+		explosionVbo.clear();
+		explosionVbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+		explosionVbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
+	}
+}
+
 //--------------------------------------------------------------
-// incrementally update scene (animation)
 //
 void ofApp::update() {
 
@@ -229,7 +293,7 @@ void ofApp::update() {
 	colBoxList.clear();
 	octree.intersect(bounds, octree.root, colBoxList);
 
-	if (colBoxList.size() >= 10) {
+	if (player.alive and colBoxList.size() >= 10) {
 
 		glm::vec3 n = glm::vec3(0, 0, 0);
 		for (int i = 0; i < colBoxList.size(); i++) {
@@ -261,14 +325,14 @@ void ofApp::update() {
 				player.alive = false;
 				cout << "LANDED SAFE!" << endl;
 			}
-		}
+			
+			float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
+			float resolution = 0.2f;
 
-		float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
-		float resolution = 0.2f;
-
-		if (mag < 0) { 
-			glm::vec3 p = (resolution + 1) * -mag * n;
-			player.velocity = ofVec3f(p.x, p.y, p.z);
+			if (mag < 0) {
+				glm::vec3 p = (resolution + 1) * -mag * n;
+				player.velocity = ofVec3f(p.x, p.y, p.z);
+			}
 		}
 	}
 
@@ -297,9 +361,15 @@ void ofApp::update() {
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
+<<<<<<< HEAD
+
+	loadVbo();
+	ofBackground(ofColor::black);
+=======
 	ofDisableDepthTest();
 	background.draw(0,0,ofGetScreenWidth(), ofGetScreenHeight());
 	ofEnableDepthTest();
+>>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 	
 
 	ofDrawBitmapString("Fuel Left: " + to_string((int)std::round(thrusterFuelLimit/1000)) + " seconds", (ofGetWindowWidth() / 2)-50, 25);
@@ -418,10 +488,6 @@ void ofApp::draw() {
 		//cout << "selected point: " << p << endl;
 	}
 
-	bottomThruster.draw();
-	backThruster.draw();
-	explosionEmitter.draw();
-
 	/* craterLanding.draw();
 	hillLanding.draw();
 	flatLanding.draw();
@@ -446,10 +512,46 @@ void ofApp::draw() {
 		cam.end();
 		break;
 	}
+<<<<<<< HEAD
+	
+	glDepthMask(GL_FALSE);
+
+	ofSetColor(255, 100, 90);
+
+	// this makes everything look glowy :)
+	//
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	ofEnablePointSprites();
+
+	// begin drawing in the camera
+	//
+	shader.begin();
+	cam.begin();
+
+	// draw particle emitter here..
+	//
+	particleTex.bind();
+	bottomVbo.draw(GL_POINTS, 0, (int)bottomThruster.sys->particles.size());
+	backVbo.draw(GL_POINTS, 0, (int)backThruster.sys->particles.size());
+	explosionVbo.draw(GL_POINTS, 0, (int)explosionEmitter.sys->particles.size());
+	particleTex.unbind();
+
+	cam.end();
+	shader.end();
+
+	ofDisablePointSprites();
+	ofDisableBlendMode();
+	ofEnableAlphaBlending();
+
+	// set back the depth mask
+	//
+	glDepthMask(GL_TRUE);
+=======
 
 	glDepthMask(false);
 	if (!bHide) gui.draw();
 	glDepthMask(true);
+>>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 }
 
 // 
@@ -529,8 +631,6 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'u':
 	{
-		if (colBoxList.size() >= 10) bMovingLanderUp = true;
-		break;
 	}
 	case 'v':
 		togglePointsDisplay();

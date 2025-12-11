@@ -115,6 +115,7 @@ void ParticleEmitter::spawn(float time) {
 	//
 	particle.lifespan = lifespan;
 	particle.birthtime = time;
+	particle.radius = particleRadius;
 
 	// add to system
 	//

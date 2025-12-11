@@ -17,7 +17,7 @@ Particle::Particle() {
 }
 
 void Particle::draw() {
-	ofSetColor(color);
+	ofSetColor(ofMap(age(), 0, lifespan, 255, 10), 0, 0);
 	ofDrawSphere(position, radius);
 }
 

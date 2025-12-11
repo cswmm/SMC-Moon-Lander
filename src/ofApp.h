@@ -29,6 +29,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent2(ofDragInfo dragInfo);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+		void loadVbo();
 		void drawAxis(ofVec3f);
 		void initLightingAndMaterials();
 		void savePicture();
@@ -66,6 +67,11 @@ class ofApp : public ofBaseApp{
 
 		ParticleEmitter explosionEmitter;
 
+		ofVbo bottomVbo;
+		ofVbo backVbo;
+		ofVbo explosionVbo;
+		ofShader shader;
+
 		bool bAltKeyDown;
 		bool bWireframe;
 		bool bDisplayPoints;
@@ -78,7 +84,6 @@ class ofApp : public ofBaseApp{
 		
 		bool bLanderLoaded;
 		bool bTerrainSelected;
-		bool bMovingLanderUp;
 	
 		ofVec3f selectedPoint;
 		ofVec3f intersectPoint;
@@ -103,13 +108,17 @@ class ofApp : public ofBaseApp{
 		float thrusterFuelLimit;
 		float agi;
 
-
 		ofLight star;
 		ofLight fill;
 		ofLight rim;
 		ofLight landerLight;
 
+<<<<<<< HEAD
+		ofTexture particleTex;
+		float particleRadius = 5.0f;
+=======
 		ofSoundPlayer engineThrust;
 		ofSoundPlayer playerDeath;
 		ofImage background;
+>>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 };
