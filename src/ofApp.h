@@ -113,6 +113,12 @@ class ofApp : public ofBaseApp{
 		ofLight rim;
 		ofLight landerLight;
 
+<<<<<<< HEAD
 		ofTexture particleTex;
 		float particleRadius = 5.0f;
+=======
+		ofSoundPlayer engineThrust;
+		ofSoundPlayer playerDeath;
+		ofImage background;
+>>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 };

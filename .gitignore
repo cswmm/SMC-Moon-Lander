@@ -360,3 +360,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/bin/data/geo/terrain.mtl
+/bin/data/geo/terrain.mtl
+/bin/data/geo/terrain.obj

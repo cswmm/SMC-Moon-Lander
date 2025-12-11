@@ -128,7 +128,7 @@ void ofApp::setup(){
 		uint64_t end = ofGetElapsedTimeMillis();
 		cout << "Time to build the tree: " << end - start << " ms" << endl;
 	} else {
-		octree.create(mars.getMesh(0), 20);
+		octree.create(mars.getMesh(1), 20);
 	}
 	
 	cout << "Number of Verts: " << mars.getMesh(0).getNumVertices() << endl;
@@ -191,6 +191,13 @@ void ofApp::setup(){
 	cout << "Landing: " << l << endl;
 	landing = &landingAreas[l];
 	cout << "landing pos: " << landing->getPosition().x << " " << landing->getPosition().z << endl;
+
+	engineThrust.load("sounds/thrust.mp3");
+	engineThrust.setLoop(true);
+	playerDeath.load("sounds/astdestroy.mp3");
+
+	bool load = background.load("images/house.jpg");
+	cout << load << endl;
 }
 
 // load vertex buffer in preparation for rendering
@@ -310,6 +317,7 @@ void ofApp::update() {
 			cout << "EXPLODED!" << endl;
 
 			player.crash();
+			playerDeath.play();
 		} else {
 			glm::vec2 lpos = glm::vec2(landing->getPosition().x, landing->getPosition().z);
 			glm::vec2 ppos = glm::vec2(player.getPosition().x, player.getPosition().z);
@@ -332,6 +340,12 @@ void ofApp::update() {
 	landerCam.setPosition(player.getPosition());
 	landerCam.lookAt(landing->getPosition());
 
+	if ((bottomThruster.active || backThruster.active) && !engineThrust.isPlaying()) {
+		engineThrust.play();
+	} else if (!(bottomThruster.active || backThruster.active) && engineThrust.isPlaying()) {
+		engineThrust.stop();
+	}
+
 
 	if (player.alive) {
 		if (thrusterFuelLimit <= 0) {
@@ -347,13 +361,16 @@ void ofApp::update() {
 }
 //--------------------------------------------------------------
 void ofApp::draw() {
+<<<<<<< HEAD
 
 	loadVbo();
 	ofBackground(ofColor::black);
+=======
+	ofDisableDepthTest();
+	background.draw(0,0,ofGetScreenWidth(), ofGetScreenHeight());
+	ofEnableDepthTest();
+>>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 	
-	glDepthMask(false);
-	if (!bHide) gui.draw();
-	glDepthMask(true);
 
 	ofDrawBitmapString("Fuel Left: " + to_string((int)std::round(thrusterFuelLimit/1000)) + " seconds", (ofGetWindowWidth() / 2)-50, 25);
 	ofDrawBitmapString("AGI: " + to_string(agi), (ofGetWindowWidth() / 2) - 50, 50);
@@ -444,9 +461,6 @@ void ofApp::draw() {
 
 	// recursively draw octree
 	//
-	star.draw();
-	fill.draw();
-	rim.draw();
 
 	star.disable();
 	fill.disable();
@@ -498,6 +512,7 @@ void ofApp::draw() {
 		cam.end();
 		break;
 	}
+<<<<<<< HEAD
 	
 	glDepthMask(GL_FALSE);
 
@@ -531,6 +546,12 @@ void ofApp::draw() {
 	// set back the depth mask
 	//
 	glDepthMask(GL_TRUE);
+=======
+
+	glDepthMask(false);
+	if (!bHide) gui.draw();
+	glDepthMask(true);
+>>>>>>> 4ce5348bbc84fecceacd5359f69583dbd244b0a0
 }
 
 // 
@@ -663,6 +684,20 @@ void ofApp::keyPressed(int key) {
 	//case 'l':
 	//	player.rotation.z += 5;
 	//	break;
+	case '1':
+		camSelection = 0;
+		break;
+	case '2':
+		camSelection = 1;
+		break;
+	case '3':
+		camSelection = 2;
+		break;
+	case '4':
+		camSelection = 3;
+		break;
+	case '5':
+		camSelection = 4;
 	default:
 		break;
 	}
