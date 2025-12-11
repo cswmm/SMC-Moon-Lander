@@ -252,24 +252,24 @@ void ofApp::loadVbo() {
 //--------------------------------------------------------------
 //
 void ofApp::update() {
-
+	//Check if Player is moving left/right/fws/bwd
 	if (player.alive and (player.bwdPressed || player.fwdPressed || player.leftPressed || player.rightPressed)) {
 		backThruster.active = true;
 		backThruster.setVelocity(-player.getHeadingD() * 10);
 	}
-
+	//Check if player is moving up
 	if (player.alive and player.upPressed) {
 		bottomThruster.active = true;
 	}
-
+	//Check if Player has stopped moving left/right/fwd/bwd
 	if ((!player.bwdPressed && !player.fwdPressed && !player.leftPressed && !player.rightPressed)) {
 		backThruster.active = false;
 	}
-
+	//Check if player isnt moving up anymore
 	if (!player.upPressed) {
 		bottomThruster.active = false;
 	}
-
+	//Update thruster positions
 	bottomThruster.setPosition(player.getPosition());
 	bottomThruster.update();
 
@@ -277,14 +277,14 @@ void ofApp::update() {
 	backThruster.update();
 
 	explosionEmitter.update();
-
+	//Integrate landing areas (make them spin)
 	landing->integrate();
 
 	ofVec3f min = player.model.getSceneMin() + player.getPosition();
 	ofVec3f max = player.model.getSceneMax() + player.getPosition();
 
 	Box bounds = Box(Vector3(min.x, min.y, min.z), Vector3(max.x, max.y, max.z));
-
+	//Handle Collision
 	glm::vec3 pos = player.getPosition();
 	TreeNode nodeRet;
 	octree.intersect(Ray(Vector3(pos.x, pos.y, pos.z), Vector3(pos.x, -1000, pos.z)), octree.root, nodeRet);
@@ -292,7 +292,7 @@ void ofApp::update() {
 
 	colBoxList.clear();
 	octree.intersect(bounds, octree.root, colBoxList);
-
+	//If Collided and is alive
 	if (player.alive and colBoxList.size() >= 10) {
 
 		glm::vec3 n = glm::vec3(0, 0, 0);
@@ -306,24 +306,24 @@ void ofApp::update() {
 			n += glm::normalize(force);
 		}
 		n = glm::normalize(n);
-
+		//Check velocity
 		glm::vec3 v = player.velocity;
 
 		float maxVelocity = abs(player.gravity);
-		if (glm::length(v) > maxVelocity) {
+		if (glm::length(v) > maxVelocity) { // If velocity is too great, explode.
 			explosionEmitter.setPosition(player.getPosition());
 			explosionEmitter.start();
 			explosionEmitter.setVelocity(ofVec3f(10, 10, 10));
-			cout << "EXPLODED!" << endl;
 
 			player.crash();
 			playerDeath.play();
-		} else {
+		} else { // Else, resolve colision
 			glm::vec2 lpos = glm::vec2(landing->getPosition().x, landing->getPosition().z);
 			glm::vec2 ppos = glm::vec2(player.getPosition().x, player.getPosition().z);
 			if (agi < 3 && glm::distance(lpos, ppos) < landing->radius) {
 				player.alive = false;
-				cout << "LANDED SAFE!" << endl;
+				player.gravity = 0;
+				gameEnded = true;
 			}
 			
 			float mag = glm::dot(n, glm::vec3(v.x, v.y, v.z));
@@ -335,18 +335,18 @@ void ofApp::update() {
 			}
 		}
 	}
-
+	//Integrate player and attach landing cam.
 	player.integrate();
 	landerCam.setPosition(player.getPosition());
 	landerCam.lookAt(landing->getPosition());
-
+	//Play thrust audio
 	if ((bottomThruster.active || backThruster.active) && !engineThrust.isPlaying()) {
 		engineThrust.play();
 	} else if (!(bottomThruster.active || backThruster.active) && engineThrust.isPlaying()) {
 		engineThrust.stop();
 	}
 
-
+	//Check thruster fuel limit
 	if (player.alive) {
 		if (thrusterFuelLimit <= 0) {
 			player.alive = false;
@@ -365,15 +365,20 @@ void ofApp::draw() {
 	ofSetColor(ofColor::white);
 
 	loadVbo();
-
+	//Draw background
 	ofDisableDepthTest();
 	background.draw(0,0,ofGetScreenWidth(), ofGetScreenHeight());
 	ofEnableDepthTest();
-	
 
+	if (gameEnded) {
+		ofDrawBitmapString("Landed Successfully!", ofGetWindowSize() / 2);
+		return;
+	}
+
+	//Draw text
 	ofDrawBitmapString("Fuel Left: " + to_string((int)std::round(thrusterFuelLimit/1000)) + " seconds", (ofGetWindowWidth() / 2)-50, 25);
-	ofDrawBitmapString("AGI: " + to_string(agi), (ofGetWindowWidth() / 2) - 50, 50);
-
+	ofDrawBitmapString("AGL: " + to_string(agi), (ofGetWindowWidth() / 2) - 50, 50);
+	//Cam selection
 	switch (camSelection) {
 	case 0:
 		fixedCam1.begin();
@@ -406,9 +411,11 @@ void ofApp::draw() {
 		if (bTerrainSelected) drawAxis(ofVec3f(0, 0, 0));
 	} else {
 		ofEnableLighting(); // shaded mode
+		//Enable lights
 		star.enable();
 		fill.enable();
 		rim.enable();
+		//Draw terrain
 		mars.drawFaces();
 
 		ofMesh mesh;
@@ -458,9 +465,8 @@ void ofApp::draw() {
 		ofDrawSphere(selectedPoint, .1);
 	}
 
-	// recursively draw octree
-	//
-
+	
+	//Disable lights
 	star.disable();
 	fill.disable();
 	rim.disable();
@@ -487,13 +493,10 @@ void ofApp::draw() {
 		//cout << "selected point: " << p << endl;
 	}
 
-	/* craterLanding.draw();
-	hillLanding.draw();
-	flatLanding.draw();
-	holeLanding.draw();*/
+	//Draw landing area
 	landing->draw();
 	ofPopMatrix();
-
+	//End camera
 	switch (camSelection) {
 	case 0:
 		fixedCam1.end();
@@ -524,7 +527,25 @@ void ofApp::draw() {
 	// begin drawing in the camera
 	//
 	shader.begin();
-	cam.begin();
+	switch (camSelection) {
+	case 0:
+		fixedCam1.begin();
+		break;
+	case 1:
+		fixedCam2.begin();
+		break;
+	case 2:
+		fixedCam3.begin();
+		break;
+	case 3:
+		if (bLanderLoaded) {
+			landerCam.begin();
+			break;
+		}
+	default:
+		cam.begin();
+		break;
+	}
 
 	// draw particle emitter here..
 	//
@@ -533,8 +554,24 @@ void ofApp::draw() {
 	backVbo.draw(GL_POINTS, 0, (int)backThruster.sys->particles.size());
 	explosionVbo.draw(GL_POINTS, 0, (int)explosionEmitter.sys->particles.size());
 	particleTex.unbind();
-
-	cam.end();
+	//End camera
+	switch (camSelection) {
+	case 0:
+		fixedCam1.end();
+		break;
+	case 1:
+		fixedCam2.end();
+		break;
+	case 2:
+		fixedCam3.end();
+		break;
+	case 3:
+		landerCam.end();
+		break;
+	default:
+		cam.end();
+		break;
+	}
 	shader.end();
 
 	ofDisablePointSprites();
@@ -544,6 +581,8 @@ void ofApp::draw() {
 	glDepthMask(false);
 	if (!bHide) gui.draw();
 	glDepthMask(true);
+
+	ofSetColor(ofColor::white);
 }
 
 // 

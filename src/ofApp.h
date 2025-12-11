@@ -107,6 +107,7 @@ class ofApp : public ofBaseApp{
 		std::array<Landing, 4> landingAreas;
 		float thrusterFuelLimit;
 		float agi;
+		float gameEnded = false;
 
 		ofLight star;
 		ofLight fill;
