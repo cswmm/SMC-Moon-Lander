@@ -339,6 +339,7 @@ void ofApp::update() {
 	player.integrate();
 	landerCam.setPosition(player.getPosition());
 	landerCam.lookAt(landing->getPosition());
+	fixedCam2.lookAt(player.getPosition());
 	//Play thrust audio
 	if ((bottomThruster.active || backThruster.active) && !engineThrust.isPlaying()) {
 		engineThrust.play();
@@ -700,18 +701,6 @@ void ofApp::keyPressed(int key) {
 		player.rightPressed = true;
 		break;
 
-	// for testing rotation
-	//case 'i':
-	//	player.rotation.x += 5;
-	//	break;
-	//case 'j':
-	//	player.rotation.z -= 5;
-	//case 'k':
-	//	player.rotation.x -= 5;
-	//	break;
-	//case 'l':
-	//	player.rotation.z += 5;
-	//	break;
 	case '1':
 		camSelection = 0;
 		break;
